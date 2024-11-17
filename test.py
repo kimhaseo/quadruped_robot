@@ -114,16 +114,17 @@ def motor_control(x_range, z_range):
                                                                      hip_positions["front_right"])
             rl_theta1, rl_theta2, rl_theta3 = calculate_leg_position(False, x_range[2][i], -50, z_range[2][i],
                                                                      hip_positions["rear_left"])
-            rr_theta1, rr_theta2, rr_theta3 = calculate_leg_position(True, x_range[3][i], 50, z_range[3][i],
+            rr_theta1, rr_theta2, rr_theta3 = calculate_leg_positionㅈ(True, x_range[3][i], 50, z_range[3][i],
                                                                      hip_positions["rear_right"])
 
             motor_commands = [
                 MotorCommand("lf_joint1", -fl_theta2),
                 MotorCommand("rf_joint2", -2 * (fl_theta3)),
             ]
+            print(fl_theta1,fr_theta1,rl_theta1,rr_theta1)
 
             # 모터 명령 동기적으로 실행
-            motor_controller.move_motors(motor_commands)
+            # motor_controller.move_motors(motor_commands)
 
             # 약간의 지연 추가
             time.sleep(0.015)
