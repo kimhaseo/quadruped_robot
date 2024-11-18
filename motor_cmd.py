@@ -33,6 +33,7 @@ class AngleCommand(MotorCommand):
 
     def __init__(self, motor_name: str, angle: int):
         super().__init__(motor_name, angle)
+        self.angle = angle  # angle 속성 설정
 
 
 # AeccelCommand 클래스도 MotorCommand를 상속받아서 작성

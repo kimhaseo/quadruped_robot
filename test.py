@@ -1,13 +1,12 @@
 from motor_controller import MotorController
-from motor_cmd import AngleCommand, AeccelCmd
+from motor_cmd import AngleCommand, AeccelCommand
 import numpy as np
-from datetime import datetime
 import math
 import time
 # 다리의 길이
 L1 = 50  # mm
-L2 = 200
-L3 = 200
+L2 = 180
+L3 = 180
 
 # 로봇 몸체에서 각 다리의 원점 좌표 설정 (앞-뒤, 좌-우 대칭)
 hip_positions = {
@@ -17,10 +16,11 @@ hip_positions = {
     "rear_right": np.array([-300, +50, 0])  # 뒤 오른쪽 다리
 }
 
-step_length = 50
-step_hight = 35
-speed = 50 # mm/s
-hz = 400 * speed / step_length
+speed = 100 # mm/s
+step_length = 60
+step_hight = 20
+
+hz = 200 * speed / step_length
 motor_delay = 1/ hz
 
 
@@ -85,15 +85,15 @@ def foot_trajectory(time, is_left):
 # 크롤 패턴 생성 함수
 def generate_crawl_gait_pattern():
     T = 2
-    dt = 0.005
+    dt = 0.01
     time = np.arange(0, T, dt)
     left_x, left_z = foot_trajectory(time, is_left=True)
     right_x, right_z = foot_trajectory(time, is_left=False)
 
-    x_front_left = left_x
-    x_front_right = right_x
-    z_front_left = -300 + left_z
-    z_front_right = -300 + right_z
+    x_front_left = left_x + step_length
+    x_front_right = right_x + step_length
+    z_front_left = -250 + left_z
+    z_front_right = -250 + right_z
 
     x_rear_left = x_front_right
     z_rear_left = z_front_right
@@ -112,7 +112,7 @@ def generate_crawl_gait_pattern():
 def motor_control(x_range, z_range):
     num_steps = len(x_range[0])
     motor_controller = MotorController()  # MotorController 초기화
-    while True:
+    for i in range(10):
         for i in range(num_steps):
             fl_theta1, fl_theta2, fl_theta3 = calculate_leg_position(False, x_range[0][i], -50, z_range[0][i],
                                                                      hip_positions["front_left"])
@@ -124,25 +124,24 @@ def motor_control(x_range, z_range):
                                                                      hip_positions["rear_right"])
             angle_commands = [
                 AngleCommand("lf_joint1", -fl_theta2),
-                AngleCommand("lf_joint2", -fl_theta2),
-                AngleCommand("lf_joint3", -2 * (fl_theta3)),
-                AngleCommand("rf_joint1", -fr_theta1),
+                # AngleCommand("lf_joint2", -fl_theta2),
+                # AngleCommand("lf_joint3", -2 * (fl_theta3)),
+                # AngleCommand("rf_joint1", -fr_theta1),
                 AngleCommand("rf_joint2", -2 * (fl_theta3)),
-                AngleCommand("rf_joint3", -2 * (fr_theta3)),
-                AngleCommand("lr_joint1", -rl_theta1),
-                AngleCommand("lr_joint2", -rl_theta2),
-                AngleCommand("lr_joint3", -2 * (rl_theta3)),
-                AngleCommand("rr_joint1", -rr_theta1),
-                AngleCommand("rr_joint2", -rr_theta2),
-                AngleCommand("rr_joint3", -2 *(rr_theta3)),
+                # AngleCommand("rf_joint3", -2 * (fr_theta3)),
+                # AngleCommand("lr_joint1", -rl_theta1),
+                # AngleCommand("lr_joint2", -rl_theta2),
+                # AngleCommand("lr_joint3", -2 * (rl_theta3)),
+                # AngleCommand("rr_joint1", -rr_theta1),
+                # AngleCommand("rr_joint2", -rr_theta2),
+                # AngleCommand("rr_joint3", -2 *(rr_theta3)),
             ]
 
             # 모터 명령 동기적으로 실행
             motor_controller.move_motors(angle_commands)
-
             # 약간의 지연 추가
             time.sleep(motor_delay)
-
+    motor_controller.close()
 
 def main():
     # 발의 궤적 생성
