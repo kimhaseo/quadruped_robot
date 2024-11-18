@@ -10,5 +10,4 @@ To do
 - image processing
 - imu body controller
 - ros2 package (odometry)
-- slam & navigation (2D OR 3D)
-- 
+- slam & navigation (2D or 3D) 
