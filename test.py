@@ -1,5 +1,5 @@
 from motor_controller import MotorController
-from motor_cmd import MotorCommand
+from motor_cmd import AngleCommand, AeccelCmd
 import numpy as np
 from datetime import datetime
 import math
@@ -16,6 +16,12 @@ hip_positions = {
     "rear_left": np.array([-300, -50, 0]),  # 뒤 왼쪽 다리
     "rear_right": np.array([-300, +50, 0])  # 뒤 오른쪽 다리
 }
+
+step_length = 50
+step_hight = 35
+speed = 50 # mm/s
+hz = 400 * speed / step_length
+motor_delay = 1/ hz
 
 
 # 다리 위치 계산 함수 (중복된 함수 정의 제거)
@@ -53,24 +59,24 @@ def foot_trajectory(time, is_left):
     if is_left:
         x = np.where(
             (0 <= time) & (time < 2 / 2),
-            80 * (-1 + 2 * time / (2 / 2)),
-            80 * (1 - 2 * (time - 2 / 2) / (2 / 2))
+            step_length * (-1 + 2 * time / (2 / 2)),
+            step_length * (1 - 2 * (time - 2 / 2) / (2 / 2))
         )
         z = np.where(
             (0 <= time) & (time < 2 / 2),
-            70 * np.sin(np.pi * time / (2 / 2)),
+            step_hight * np.sin(np.pi * time / (2 / 2)),
             0
         )
     else:
         x = np.where(
             (0 <= time) & (time < 2 / 2),
-            80 * (1 - 2 * time / (2 / 2)),
-            80 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
+            step_length * (1 - 2 * time / (2 / 2)),
+            step_length * (-1 + 2 * (time - 2 / 2) / (2 / 2))
         )
         z = np.where(
             (0 <= time) & (time < 2 / 2),
             0,
-            70 * np.sin(np.pi * (time - 2 / 2) / (2 / 2))
+            step_hight * np.sin(np.pi * (time - 2 / 2) / (2 / 2))
         )
 
     return np.array(x), np.array(z)
@@ -79,7 +85,7 @@ def foot_trajectory(time, is_left):
 # 크롤 패턴 생성 함수
 def generate_crawl_gait_pattern():
     T = 2
-    dt = 0.01
+    dt = 0.005
     time = np.arange(0, T, dt)
     left_x, left_z = foot_trajectory(time, is_left=True)
     right_x, right_z = foot_trajectory(time, is_left=False)
@@ -114,20 +120,19 @@ def motor_control(x_range, z_range):
                                                                      hip_positions["front_right"])
             rl_theta1, rl_theta2, rl_theta3 = calculate_leg_position(False, x_range[2][i], -50, z_range[2][i],
                                                                      hip_positions["rear_left"])
-            rr_theta1, rr_theta2, rr_theta3 = calculate_leg_positionㅈ(True, x_range[3][i], 50, z_range[3][i],
+            rr_theta1, rr_theta2, rr_theta3 = calculate_leg_position(True, x_range[3][i], 50, z_range[3][i],
                                                                      hip_positions["rear_right"])
 
-            motor_commands = [
-                MotorCommand("lf_joint1", -fl_theta2),
-                MotorCommand("rf_joint2", -2 * (fl_theta3)),
+            angle_commands = [
+                AngleCommand("lf_joint1", -fl_theta2),
+                AngleCommand("rf_joint2", -2 * (fl_theta3)),
             ]
-            print(fl_theta1,fr_theta1,rl_theta1,rr_theta1)
 
             # 모터 명령 동기적으로 실행
-            # motor_controller.move_motors(motor_commands)
+            motor_controller.move_motors(angle_commands)
 
             # 약간의 지연 추가
-            time.sleep(0.015)
+            time.sleep(motor_delay)
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # 마이크로초 단위 시간 포함
             print(f"현재 시간: {current_time}")
 
