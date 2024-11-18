@@ -1,13 +1,11 @@
 사족보행로봇 개발
 
-- can protocol motor control
-- inversekinematics solver
-- dataclass
+CAN protocol motor control
+Inverse kinematics solver
+Dataclass
+To Do
 
-
-To do 
-
-- image processing
-- imu body controller
-- ros2 package (odometry)
-- slam & navigation (2D or 3D) 
+Implement image processing
+Develop IMU body controller
+Create ROS2 package (odometry)
+Design SLAM & navigation (2D or 3D)
