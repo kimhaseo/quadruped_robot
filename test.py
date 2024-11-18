@@ -122,10 +122,19 @@ def motor_control(x_range, z_range):
                                                                      hip_positions["rear_left"])
             rr_theta1, rr_theta2, rr_theta3 = calculate_leg_position(True, x_range[3][i], 50, z_range[3][i],
                                                                      hip_positions["rear_right"])
-
             angle_commands = [
                 AngleCommand("lf_joint1", -fl_theta2),
+                AngleCommand("lf_joint2", -fl_theta2),
+                AngleCommand("lf_joint3", -2 * (fl_theta3)),
+                AngleCommand("rf_joint1", -fr_theta1),
                 AngleCommand("rf_joint2", -2 * (fl_theta3)),
+                AngleCommand("rf_joint3", -2 * (fr_theta3)),
+                AngleCommand("lr_joint1", -rl_theta1),
+                AngleCommand("lr_joint2", -rl_theta2),
+                AngleCommand("lr_joint3", -2 * (rl_theta3)),
+                AngleCommand("rr_joint1", -rr_theta1),
+                AngleCommand("rr_joint2", -rr_theta2),
+                AngleCommand("rr_joint3", -2 *(rr_theta3)),
             ]
 
             # 모터 명령 동기적으로 실행
@@ -133,8 +142,6 @@ def motor_control(x_range, z_range):
 
             # 약간의 지연 추가
             time.sleep(motor_delay)
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # 마이크로초 단위 시간 포함
-            print(f"현재 시간: {current_time}")
 
 
 def main():
