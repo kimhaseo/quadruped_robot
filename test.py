@@ -19,7 +19,6 @@ hip_positions = {
 speed = 100 # mm/s
 step_length = 60
 step_hight = 20
-
 hz = 200 * speed / step_length
 motor_delay = 1/ hz
 
@@ -106,6 +105,7 @@ def generate_crawl_gait_pattern():
         x_rear_left, z_rear_left,
         x_rear_right, z_rear_right
     )
+
 def robot_standby():
     left_theta1, left_theta2, left_theta3= calculate_leg_position(False, 0, -50, -250)
     right_theta1, right_theta2, right_theta3 = calculate_leg_position(True, 0, 50,-250)
