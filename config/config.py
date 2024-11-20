@@ -1,12 +1,12 @@
 
 leg_length = {
-    "L1": 50,
+    "L1": 60,
     "L2": 180,
     "L3": 180
 }
 
 body_dimensions = {
-    "length": 600,  # mm
-    "width": 300,   # mm
-    "height": 300   # mm
+    "length": 400,  # mm
+    "width": 150,   # mm
+    "height": 250   # mm
 }
