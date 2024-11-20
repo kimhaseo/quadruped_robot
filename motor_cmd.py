@@ -30,10 +30,12 @@ class MotorCommand:
 @dataclass
 class AngleCommand(MotorCommand):
     angle: int
+    speed: int
 
-    def __init__(self, motor_name: str, angle: int):
-        super().__init__(motor_name, angle)
+    def __init__(self, motor_name: str, angle: int, speed: int = 14000):
+        super().__init__(motor_name, angle, speed)
         self.angle = angle  # angle 속성 설정
+        self.speed = speed  # speed 속성 설정
 
 
 # AeccelCommand 클래스도 MotorCommand를 상속받아서 작성

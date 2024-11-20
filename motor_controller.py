@@ -7,10 +7,13 @@ class MotorController:
     def move_motor_to_angle(self, angle_command):
         try:
             angle = angle_command.angle
+            speed = angle_command.speed
             can_id = angle_command.can_id
             angle_control = int(angle * 1000)
-            command_byte = 0xA3
+            command_byte = 0xA4
             null_byte = 0x00
+            speed_limit_low = speed & 0xFF
+            speed_limit_high = (speed >> 8) & 0xFF
             angle_control_low = angle_control & 0xFF
             angle_control_mid1 = (angle_control >> 8) & 0xFF
             angle_control_mid2 = (angle_control >> 16) & 0xFF
@@ -21,8 +24,8 @@ class MotorController:
             data = [
                 command_byte,
                 null_byte,
-                null_byte,
-                null_byte,
+                speed_limit_low,
+                speed_limit_high,
                 angle_control_low,
                 angle_control_mid1,
                 angle_control_mid2,

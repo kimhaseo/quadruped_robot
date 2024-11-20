@@ -25,7 +25,7 @@ motor_delay = 1/ hz
 
 
 # 다리 위치 계산 함수 (중복된 함수 정의 제거)
-def calculate_leg_position(right_leg, x, y, z, hip_pos):
+def calculate_leg_position(right_leg, x, y, z):
     A = np.sqrt(y ** 2 + z ** 2)
     a1 = np.degrees(math.atan2(y, z))
     a2 = np.degrees(np.arccos(L1 / A))
@@ -49,7 +49,7 @@ def calculate_leg_position(right_leg, x, y, z, hip_pos):
     b3 = np.degrees(np.arccos((L2 ** 2 + L3 ** 2 - B ** 2) / (2 * L2 * L3)))
     theta3 = 180 - b3
     theta3 = round(theta3, 2)
-    b4 = 90 - b3 + theta2
+
 
     return theta1, theta2, theta3
 
@@ -106,6 +106,26 @@ def generate_crawl_gait_pattern():
         x_rear_left, z_rear_left,
         x_rear_right, z_rear_right
     )
+def robot_standby():
+    left_theta1, left_theta2, left_theta3= calculate_leg_position(False, 0, -50, -250)
+    right_theta1, right_theta2, right_theta3 = calculate_leg_position(True, 0, 50,-250)
+    speed = 100
+
+    angle_commands = [
+        AngleCommand("lf_joint1", left_theta2, speed),
+        # AngleCommand("lf_joint2", -fl_theta2, speed),
+        # AngleCommand("lf_joint3", -2 * (fl_theta3), speed),
+        # AngleCommand("rf_joint1", -fr_theta1, 100),
+        AngleCommand("rf_joint2",-2 * left_theta3, speed),
+        # AngleCommand("rf_joint3", -2 * fr_theta3 , speed),
+        # AngleCommand("lr_joint1", -rl_theta1, speed),
+        # AngleCommand("lr_joint2", -rl_theta2, speed),
+        # AngleCommand("lr_joint3", -2 * rl_theta3, speed),
+        # AngleCommand("rr_joint1", -rr_theta1, speed),
+        # AngleCommand("rr_joint2", -rr_theta2, speed),
+        # AngleCommand("rr_joint3", -2 *rr_theta3, speed),
+    ]
+    motor_controller.move_motors(angle_commands)
 
 
 # 모터 제어 함수 (비동기 처리 방식 수정)
@@ -114,14 +134,11 @@ def motor_control(x_range, z_range):
     motor_controller = MotorController()  # MotorController 초기화
     for i in range(10):
         for i in range(num_steps):
-            fl_theta1, fl_theta2, fl_theta3 = calculate_leg_position(False, x_range[0][i], -50, z_range[0][i],
-                                                                     hip_positions["front_left"])
-            fr_theta1, fr_theta2, fr_theta3 = calculate_leg_position(True, x_range[1][i], 50, z_range[1][i],
-                                                                     hip_positions["front_right"])
-            rl_theta1, rl_theta2, rl_theta3 = calculate_leg_position(False, x_range[2][i], -50, z_range[2][i],
-                                                                     hip_positions["rear_left"])
-            rr_theta1, rr_theta2, rr_theta3 = calculate_leg_position(True, x_range[3][i], 50, z_range[3][i],
-                                                                     hip_positions["rear_right"])
+            fl_theta1, fl_theta2, fl_theta3 = calculate_leg_position(False, x_range[0][i], -50, z_range[0][i])
+            fr_theta1, fr_theta2, fr_theta3 = calculate_leg_position(True, x_range[1][i], 50, z_range[1][i])
+            rl_theta1, rl_theta2, rl_theta3 = calculate_leg_position(False, x_range[2][i], -50, z_range[2][i])
+            rr_theta1, rr_theta2, rr_theta3 = calculate_leg_position(True, x_range[3][i], 50, z_range[3][i])
+
             angle_commands = [
                 AngleCommand("lf_joint1", -fl_theta2),
                 # AngleCommand("lf_joint2", -fl_theta2),
@@ -145,6 +162,9 @@ def motor_control(x_range, z_range):
 
 def main():
     # 발의 궤적 생성
+    robot_standby()
+    time.sleep(5)
+
     x_front_left, z_front_left, x_front_right, z_front_right, x_rear_left, z_rear_left, x_rear_right, z_rear_right = generate_crawl_gait_pattern()
 
     # 모터 제어 실행
