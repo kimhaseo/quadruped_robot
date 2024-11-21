@@ -1,4 +1,4 @@
-from can_handler import CanHandler
+from controller.can_handler import CanHandler
 
 class MotorController:
     def __init__(self):

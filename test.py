@@ -1,5 +1,5 @@
-from motor_controller import MotorController
-from motor_cmd import AngleCommand, AeccelCommand
+from controller.motor_controller import MotorController
+from config.motor_cmd import AngleCommand
 import numpy as np
 import math
 import time

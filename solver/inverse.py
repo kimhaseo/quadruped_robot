@@ -1,9 +1,6 @@
-import configparser
-from os import error
+
 import numpy as np
 import math
-
-from numpy.f2py.crackfortran import kindselector
 from config import config
 
 class Kinematics:

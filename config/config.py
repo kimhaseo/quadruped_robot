@@ -10,3 +10,5 @@ body_dimensions = {
     "width": 150,   # mm
     "height": 250   # mm
 }
+
+leg_resolution = 200
