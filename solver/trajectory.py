@@ -15,8 +15,9 @@ right = "right"
 left = "left"
 
 
-def foot_trajectory(direction):
+def foot_trajectory(direction, speed):
     """다리의 궤적 생성"""
+    step_length = speed / 2
 
     if direction == forward:
         x = np.where(
@@ -43,11 +44,10 @@ def foot_trajectory(direction):
     return np.array(x), np.array(z)
 
 
-def generate_crawl_gait_pattern(body_direction):
+def generate_crawl_gait_pattern(body_direction, speed):
     """크롤링 보행 패턴 생성"""
-
-    def adjust_leg_trajectory(start_step, flip_x=False):
-        x, z = foot_trajectory(start_step)
+    def adjust_leg_trajectory(start_step, flip_x, speed):
+        x, z = foot_trajectory(start_step, speed)
         if flip_x:
             x = -x
         return x, z
