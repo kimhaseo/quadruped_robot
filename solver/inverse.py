@@ -70,8 +70,8 @@ class Kinematics:
 
         # 초기 발 위치에 회전 행렬 적용
         rotated_positions = np.dot(self.foot_positions, R.T)
-
-        return rotated_positions
+        calc_foot_pose = rotated_positions - self.hip_positions
+        return calc_foot_pose
     def calculate_joint_angle(self, right_leg, x, y, z):
         try:
             A = np.sqrt(y ** 2 + z ** 2)
@@ -115,7 +115,7 @@ class Kinematics:
 if __name__ == "__main__":
     # 테스트 입력 (roll, pitch, yaw 값은 도 단위)
     roll = 0  # x축 회전 (degrees)
-    pitch = 10  # y축 회전 (degrees)
+    pitch = 0  # y축 회전 (degrees)
     yaw = 0  # z축 회전 (degrees)
 
     kinematics = Kinematics()

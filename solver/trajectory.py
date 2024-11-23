@@ -3,7 +3,7 @@ from config import config
 
 
 class GaitPatternGenerator:
-    def __init__(self, step_height=20, speed=30, height=250):
+    def __init__(self, step_height=20, speed=30):
         """
         Gait Pattern Generator 초기화.
 
@@ -17,7 +17,7 @@ class GaitPatternGenerator:
         self.resolution = config.leg_resolution
         self.hz = self.resolution * 2
         self.motor_delay = 1 / self.hz
-        self.height = height
+
 
     def foot_trajectory(self, time, is_left):
         """
@@ -68,8 +68,8 @@ class GaitPatternGenerator:
 
         x_front_left = left_x
         x_front_right = right_x
-        z_front_left = -self.height + left_z
-        z_front_right = -self.height + right_z
+        z_front_left =+ left_z
+        z_front_right =+ right_z
 
         x_rear_left = x_front_right
         z_rear_left = z_front_right
@@ -83,3 +83,8 @@ class GaitPatternGenerator:
             x_rear_right, z_rear_right
         )
 
+if __name__ == "__main__":
+
+    gpg=GaitPatternGenerator()
+    trajetory = gpg.generate_crawl_gait_pattern()
+    print(trajetory)
