@@ -74,6 +74,13 @@ class Kinematics:
         return calc_foot_pose
 
     def calculate_joint_angle(self, right_leg, x, y, z):
+
+        print(x,y,z)
+        if right_leg == False:
+            y = -self.L1
+        else:
+            y = +self.L1
+        print(x, y, z)
         try:
             A = np.sqrt(y ** 2 + z ** 2)
             a1 = np.degrees(math.atan2(y, z))

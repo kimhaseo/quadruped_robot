@@ -13,7 +13,6 @@ inverse_kinematics = Kinematics()
 def driving_contoller():
 
     pattern_generator = GaitPatternGenerator()
-    inverse_kinematics = Kinematics()
     foot_poses = pattern_generator.generate_crawl_gait_pattern(robot_speed,robot_step_hight,robot_motion)
     motor_control(foot_poses)
 
@@ -21,7 +20,7 @@ def motor_control(foot_pose):
 
     base_foot_poses = inverse_kinematics.calculate_foot_position_with_orientation(*robot_oriention)
     num_steps = leg_resolution
-    print(foot_pose[0][1][0]+base_foot_poses[0][1])
+    # print(foot_pose[0][1][0]+base_foot_poses[0][1])
     for i in range(10):
         for i in range(num_steps):
             fl_theta1, fl_theta2, fl_theta3 = inverse_kinematics.calculate_joint_angle(False, foot_pose[0][0][i]+base_foot_poses[0][0], foot_pose[0][1][i]+base_foot_poses[0][1], foot_pose[0][2][i]+base_foot_poses[0][2])
