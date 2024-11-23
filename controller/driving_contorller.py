@@ -9,7 +9,7 @@ robot_oriention = robot_orientation = [0, 10, 0]
 def driving_contoller():
 
     pattern_generator = GaitPatternGenerator()
-
+    test = pattern_generator.generate_crawl_gait_pattern(robot_motion)
 
 
 
