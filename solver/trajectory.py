@@ -1,82 +1,84 @@
 import numpy as np
 from config import config
 
-# 설정
-step_height = 20
-body_high = 250
-resolution = np.linspace(0, 1, config.leg_resolution)  # 배열로 정의
-speed = 30  # mm/s
-step_length = speed / 2
 
-# 방향 상수
-forward = "forward"
-backward = "backward"
-right = "right"
-left = "left"
+class GaitPatternGenerator:
+    def __init__(self, step_height=20, speed=30, height=250):
+        """
+        Gait Pattern Generator 초기화.
 
+        :param step_height: 발의 높이 (mm)
+        :param speed: 이동 속도 (mm/s)
+        :param height: 기본 발 위치 높이 (mm)
+        """
+        self.step_height = step_height
+        self.speed = speed
+        self.step_length = speed / 2
+        self.resolution = config.leg_resolution
+        self.hz = self.resolution * 2
+        self.motor_delay = 1 / self.hz
+        self.height = height
 
-def foot_trajectory(direction, speed):
-    """다리의 궤적 생성"""
-    step_length = speed / 2
+    def foot_trajectory(self, time, is_left):
+        """
+        한쪽 발의 궤적 계산.
 
-    if direction == forward:
-        x = np.where(
-            (0 <= resolution) & (resolution < 0.5),
-            step_length * (-1 + 2 * resolution / 0.5) + step_length,
-            step_length * (1 - 2 * (resolution - 0.5) / 0.5 ) + step_length
+        :param time: 시간 배열
+        :param is_left: 왼쪽 발인지 여부 (True/False)
+        :return: x, z 좌표 배열
+        """
+        step_length = self.step_length
+        step_height = self.step_height
+
+        if is_left:
+            x = np.where(
+                (0 <= time) & (time < 2 / 2),
+                step_length * (-1 + 2 * time / (2 / 2)),
+                step_length * (1 - 2 * (time - 2 / 2) / (2 / 2))
+            )
+            z = np.where(
+                (0 <= time) & (time < 2 / 2),
+                step_height * np.sin(np.pi * time / (2 / 2)),
+                0
+            )
+        else:
+            x = np.where(
+                (0 <= time) & (time < 2 / 2),
+                step_length * (1 - 2 * time / (2 / 2)),
+                step_length * (-1 + 2 * (time - 2 / 2) / (2 / 2))
+            )
+            z = np.where(
+                (0 <= time) & (time < 2 / 2),
+                0,
+                step_height * np.sin(np.pi * (time - 2 / 2) / (2 / 2))
+            )
+
+        return np.array(x), np.array(z)
+
+    def generate_crawl_gait_pattern(self):
+        """
+        크롤 게이트 패턴 생성.
+
+        :return: 각 다리의 x, z 좌표 배열
+        """
+        time = np.linspace(0, 2, self.resolution)
+
+        left_x, left_z = self.foot_trajectory(time, is_left=True)
+        right_x, right_z = self.foot_trajectory(time, is_left=False)
+
+        x_front_left = left_x
+        x_front_right = right_x
+        z_front_left = -self.height + left_z
+        z_front_right = -self.height + right_z
+
+        x_rear_left = x_front_right
+        z_rear_left = z_front_right
+        x_rear_right = x_front_left
+        z_rear_right = z_front_left
+
+        return (
+            x_front_left, z_front_left,
+            x_front_right, z_front_right,
+            x_rear_left, z_rear_left,
+            x_rear_right, z_rear_right
         )
-        z = np.where(
-            (0 <= resolution) & (resolution < 0.5),
-            step_height * np.sin(np.pi * resolution / 0.5) - body_high,
-            0
-        )
-    elif direction == backward:
-        x = np.where(
-            (0 <= resolution) & (resolution < 0.5),
-            step_length * (1 - 2 * resolution / 0.5)+ step_length,
-            step_length * (-1 + 2 * (resolution - 0.5) / 0.5) + step_length
-        )
-        z = np.where(
-            (0 <= resolution) & (resolution < 0.5),
-            0,
-            step_height * np.sin(np.pi * (resolution - 0.5) / 0.5) - body_high
-        )
-    return np.array(x), np.array(z)
-
-
-def generate_crawl_gait_pattern(body_direction, speed):
-    """크롤링 보행 패턴 생성"""
-    def adjust_leg_trajectory(start_step, flip_x, speed):
-        x, z = foot_trajectory(start_step, speed)
-        if flip_x:
-            x = -x
-        return x, z
-
-    # 방향에 따른 다리 궤적 설정
-    if body_direction == forward:
-        fl = adjust_leg_trajectory(forward)
-        fr = adjust_leg_trajectory(backward)
-        rl = adjust_leg_trajectory(backward)
-        rr = adjust_leg_trajectory(forward)
-    elif body_direction == backward:
-        fl = adjust_leg_trajectory(forward, flip_x=True)
-        fr = adjust_leg_trajectory(backward, flip_x=True)
-        rl = adjust_leg_trajectory(backward, flip_x=True)
-        rr = adjust_leg_trajectory(forward, flip_x=True)
-    elif body_direction == right:
-        fl = adjust_leg_trajectory(forward)
-        fr = adjust_leg_trajectory(backward, flip_x=True)
-        rl = adjust_leg_trajectory(forward)
-        rr = adjust_leg_trajectory(backward, flip_x=True)
-    elif body_direction == left:
-        fl = adjust_leg_trajectory(backward, flip_x=True)
-        fr = adjust_leg_trajectory(forward)
-        rl = adjust_leg_trajectory(backward, flip_x=True)
-        rr = adjust_leg_trajectory(forward)
-
-    # 모든 다리의 궤적 반환
-
-    return fl + fr + rl + rr
-
-if __name__ == '__main__':
-    generate_crawl_gait_pattern(backward)

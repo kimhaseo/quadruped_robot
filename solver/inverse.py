@@ -22,10 +22,10 @@ class Kinematics:
         ])
 
         self.foot_positions = np.array([
-            [+self.body_length / 2, -self.body_width / 2 + self.L1, -self.body_height],  # 앞 왼쪽
-            [+self.body_length / 2, +self.body_width / 2 - self.L1, -self.body_height],  # 앞 오른쪽
-            [-self.body_length / 2, -self.body_width / 2 + self.L1, -self.body_height],  # 뒤 왼쪽
-            [-self.body_length / 2, +self.body_width / 2 - self.L1, -self.body_height],  # 뒤 오른쪽
+            [+self.body_length / 2, -self.body_width / 2 - self.L1, -self.body_height],  # 앞 왼쪽
+            [+self.body_length / 2, +self.body_width / 2 + self.L1, -self.body_height],  # 앞 오른쪽
+            [-self.body_length / 2, -self.body_width / 2 - self.L1, -self.body_height],  # 뒤 왼쪽
+            [-self.body_length / 2, +self.body_width / 2 + self.L1, -self.body_height],  # 뒤 오른쪽
         ])
 
     def calculate_foot_position_with_orientation(self, roll, pitch, yaw):
@@ -38,7 +38,7 @@ class Kinematics:
         yaw: float, z축에 대한 회전 (단위: degree)
 
         Returns:
-        np.array: 각 발의 새로운 3D 위치 배열
+        np.array: 각 발의 새로운 3D 위치 배열 (앞에 True/False 추가)
         """
 
         # 도를 라디안으로 변환
@@ -72,7 +72,6 @@ class Kinematics:
         rotated_positions = np.dot(self.foot_positions, R.T)
 
         return rotated_positions
-
     def calculate_joint_angle(self, right_leg, x, y, z):
         try:
             A = np.sqrt(y ** 2 + z ** 2)
@@ -116,26 +115,32 @@ class Kinematics:
 if __name__ == "__main__":
     # 테스트 입력 (roll, pitch, yaw 값은 도 단위)
     roll = 0  # x축 회전 (degrees)
-    pitch = 0  # y축 회전 (degrees)
+    pitch = 10  # y축 회전 (degrees)
     yaw = 0  # z축 회전 (degrees)
 
     kinematics = Kinematics()
-    new_foot_positions = kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw) - kinematics.hip_positions
+    # new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw) - kinematics.hip_positions)
+    new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw))
 
-    for i, foot_position in enumerate(new_foot_positions):
-        if i % 2 == 0:  # 오른쪽 다리
-            right_leg = True
-        else:  # 왼쪽 다리
-            right_leg = False
+    print(new_foot_positions)
 
-        # foot_position에서 x, y, z 분리
-        x, y, z = foot_position
 
-        print(f"다리 {i + 1}의 발 위치 (x, y, z): {foot_position}")
+    # for i, foot_position in enumerate(new_foot_positions):
+    #     if i % 2 == 0:  # 오른쪽 다리
+    #         right_leg = True
+    #     else:  # 왼쪽 다리
+    #         right_leg = False
+    #
+    #     # foot_position에서 x, y, z 분리
+    #     x, y, z = foot_position
+    #
+    #     print(f"다리 {i + 1}의 발 위치 (x, y, z): {foot_position}")
+    #
+    #     # calculate_joint_angle 함수에 x, y, z를 개별 인자로 전달
+    #     joint_angles = kinematics.calculate_joint_angle(right_leg, x, y, z)
+    #     if joint_angles:
+    #         print(f"다리 {i + 1} 관절 각도 (theta1, theta2, theta3): {joint_angles}")
+    #     else:
+    #         print(f"다리 {i + 1}의 관절 각도 계산 오류")
 
-        # calculate_joint_angle 함수에 x, y, z를 개별 인자로 전달
-        joint_angles = kinematics.calculate_joint_angle(right_leg, x, y, z)
-        if joint_angles:
-            print(f"다리 {i + 1} 관절 각도 (theta1, theta2, theta3): {joint_angles}")
-        else:
-            print(f"다리 {i + 1}의 관절 각도 계산 오류")
+
