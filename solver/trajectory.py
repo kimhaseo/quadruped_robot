@@ -82,3 +82,4 @@ class GaitPatternGenerator:
             x_rear_left, z_rear_left,
             x_rear_right, z_rear_right
         )
+
