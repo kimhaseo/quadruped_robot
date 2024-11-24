@@ -3,15 +3,15 @@ from dataclasses import dataclass
 # 공통된 부분을 담당하는 기본 클래스
 class MotorCommand:
     motor_mapping = {
-        "lf_joint1": 0x141,
-        "lf_joint2": 0x142,
-        "lf_joint3": 0x143,
-        "rf_joint1": 0x144,
-        "rf_joint2": 0x145,
-        "rf_joint3": 0x146,
-        "lr_joint1": 0x147,
-        "lr_joint2": 0x148,
-        "lr_joint3": 0x149,
+        "fl_joint1": 0x141,
+        "fl_joint2": 0x142,
+        "fl_joint3": 0x143,
+        "fr_joint1": 0x144,
+        "fr_joint2": 0x145,
+        "fr_joint3": 0x146,
+        "rl_joint1": 0x147,
+        "rl_joint2": 0x148,
+        "rl_joint3": 0x149,
         "rr_joint1": 0x150,
         "rr_joint2": 0x151,
         "rr_joint3": 0x152

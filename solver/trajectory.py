@@ -24,7 +24,7 @@ class GaitPatternGenerator:
         :return: x, z 좌표 배열
         """
 
-        self.step_length = speed / 2
+        self.step_length = speed
         self.step_height = step_height
 
         if start_step == 1 :
@@ -32,8 +32,8 @@ class GaitPatternGenerator:
             if foot_direction == "forward":
                 x = np.where(
                     (0 <= time) & (time < 2 / 2),
-                    self.step_length/2 * (-1 + 2 * time / (2 / 2)) + (self.step_length/2),
-                    self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2)) + (self.step_length/2)
+                    self.step_length/2 * (-1 + 2 * time / (2 / 2)),
+                    self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2))
                 )
                 y = np.zeros_like(time)
                 z = np.where(
@@ -45,8 +45,8 @@ class GaitPatternGenerator:
             elif foot_direction == "backward":
                 x = np.where(
                     (0 <= time) & (time < 2 / 2),
-                    -self.step_length/2 * (-1 + 2 * time / (2 / 2)) - (self.step_length/2),
-                    -self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2)) - (self.step_length/2)
+                    -self.step_length/2 * (-1 + 2 * time / (2 / 2)),
+                    -self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2))
                 )
                 y = np.zeros_like(time)
                 z = np.where(
@@ -60,8 +60,8 @@ class GaitPatternGenerator:
                 x = np.zeros_like(time)
                 y = np.where(
                     (0 <= time) & (time < 2 / 2),
-                    -self.step_length/2 * (-1 + 2 * time / (2 / 2)) - (self.step_length/2),
-                    -self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2)) - (self.step_length/2)
+                    -self.step_length/2 * (-1 + 2 * time / (2 / 2)),
+                    -self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2))
                 )
                 z = np.where(
                     (0 <= time) & (time < 2 / 2),
@@ -74,8 +74,8 @@ class GaitPatternGenerator:
                 x = np.zeros_like(time)
                 y = np.where(
                     (0 <= time) & (time < 2 / 2),
-                    self.step_length/2 * (-1 + 2 * time / (2 / 2)) + (self.step_length/2),
-                    self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2)) + (self.step_length/2)
+                    self.step_length/2 * (-1 + 2 * time / (2 / 2)),
+                    self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2))
                 )
                 z = np.where(
                     (0 <= time) & (time < 2 / 2),
@@ -88,8 +88,8 @@ class GaitPatternGenerator:
             if foot_direction == "forward":
                 x = np.where(
                     (0 <= time) & (time < 2 / 2),
-                    self.step_length/2 * (1 - 2 * time / (2 / 2)) + (self.step_length/2),
-                    self.step_length/2 * (-1 + 2 * (time - 2 / 2) / (2 / 2)) + (self.step_length/2)
+                    self.step_length/2 * (1 - 2 * time / (2 / 2)),
+                    self.step_length/2 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
                 )
                 y = np.zeros_like(time)
                 z = np.where(
@@ -101,8 +101,8 @@ class GaitPatternGenerator:
             if foot_direction == "backward":
                 x = np.where(
                     (0 <= time) & (time < 2 / 2),
-                    -self.step_length/2 * (1 - 2 * time / (2 / 2)) - (self.step_length/2),
-                    -self.step_length/2 * (-1 + 2 * (time - 2 / 2) / (2 / 2)) - (self.step_length/2)
+                    -self.step_length/2 * (1 - 2 * time / (2 / 2)),
+                    -self.step_length/2 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
                 )
                 y = np.zeros_like(time)
                 z = np.where(
@@ -116,8 +116,8 @@ class GaitPatternGenerator:
                 x=np.zeros_like(time)
                 y = np.where(
                     (0 <= time) & (time < 2 / 2),
-                    - self.step_length / 2 * (1 - 2 * time / (2 / 2)) - (self.step_length / 2),
-                    - self.step_length / 2 * (-1 + 2 * (time - 2 / 2) / (2 / 2)) - (self.step_length / 2)
+                    - self.step_length / 2 * (1 - 2 * time / (2 / 2)),
+                    - self.step_length / 2 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
                 )
                 z = np.where(
                     (0 <= time) & (time < 2 / 2),
@@ -130,8 +130,8 @@ class GaitPatternGenerator:
                 x=np.zeros_like(time)
                 y = np.where(
                     (0 <= time) & (time < 2 / 2),
-                    self.step_length / 2 * (1 - 2 * time / (2 / 2)) + (self.step_length / 2),
-                    self.step_length / 2 * (-1 + 2 * (time - 2 / 2) / (2 / 2)) + (self.step_length / 2)
+                    self.step_length / 2 * (1 - 2 * time / (2 / 2)),
+                    self.step_length / 2 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
                 )
                 z = np.where(
                     (0 <= time) & (time < 2 / 2),
