@@ -32,8 +32,9 @@ class AngleCommand(MotorCommand):
     angle: int
     speed: int
 
-    def __init__(self, motor_name: str, angle: int, speed: int = 14000):
-        super().__init__(motor_name, angle, speed)
+    def __init__(self, motor_name: str, angle: int, speed: int = 4000):
+        # MotorCommand는 motor_name과 value를 받으므로 angle을 value로 사용
+        super().__init__(motor_name, angle)
         self.angle = angle  # angle 속성 설정
         self.speed = speed  # speed 속성 설정
 
@@ -44,12 +45,17 @@ class AeccelCommand(MotorCommand):
     Aeccel: int
 
     def __init__(self, motor_name: str, Aeccel: int):
+        # MotorCommand는 motor_name과 value를 받으므로 Aeccel을 value로 사용
         super().__init__(motor_name, Aeccel)
 
 
 @dataclass
 class PidCommand(MotorCommand):
-    p_gain : int
-    i_gain : int
-    def __init__(self, p_gain: int, i_gain: int):
-        super().__init__(p_gain, i_gain)
+    p_gain: int
+    i_gain: int
+
+    def __init__(self, motor_name: str, p_gain: int, i_gain: int):
+        # MotorCommand는 motor_name과 value를 받으므로 p_gain을 value로 사용
+        super().__init__(motor_name, p_gain)
+        self.p_gain = p_gain
+        self.i_gain = i_gain
