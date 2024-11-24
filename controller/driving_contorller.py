@@ -1,6 +1,5 @@
 from solver.trajectory import GaitPatternGenerator
 from solver.inverse import  Kinematics
-from config.config import leg_resolution
 from config.motor_cmd import AngleCommand
 from controller.motor_controller import MotorController
 from config.config import leg_resolution
@@ -8,12 +7,11 @@ import time
 import math
 
 robot_speed = 30 #mm/s
-distance = 120
-robot_step_hight = 30
+distance = 120 #mm
+robot_step_hight = 30 #mm
 robot_motion = "forward"
 robot_orientaion = [0, 0, 0]
-resolution = leg_resolution
-motor_delay = 1 / resolution
+motor_delay = 1 / leg_resolution
 
 inverse_kinematics = Kinematics()
 motor_controller = MotorController()
@@ -28,6 +26,11 @@ def driving_contoller():
         step_count = round(step_count)
         foot_poses = pattern_generator.generate_crawl_gait_pattern(robot_speed, robot_step_hight, robot_motion)
         motor_control(foot_poses, step_count)
+
+    elif step_count ==0:
+        foot_poses = pattern_generator.generate_crawl_gait_pattern(robot_speed, robot_step_hight, robot_motion)
+        motor_control(foot_poses, 1000)
+
     else:
         # 정수가 아닌 경우 처리
         step_count_int = math.floor(step_count)
@@ -54,15 +57,13 @@ def motor_control(foot_pose,step_count):
             rl_theta1, rl_theta2, rl_theta3 = inverse_kinematics.calculate_joint_angle(False, foot_pose[2][0][i]+base_foot_poses[2][0], foot_pose[2][1][i]+base_foot_poses[2][1], foot_pose[2][2][i]+base_foot_poses[2][2])
             rr_theta1, rr_theta2, rr_theta3 = inverse_kinematics.calculate_joint_angle(True, foot_pose[3][0][i]+base_foot_poses[3][0], foot_pose[3][1][i]+base_foot_poses[3][1], foot_pose[3][2][i]+base_foot_poses[3][2])
 
-            # print(" left_x: ",foot_pose[0][0][i]+base_foot_poses[0][0]," left_y: ",foot_pose[0][1][i]+base_foot_poses[0][1] ," left_z: ",foot_pose[0][2][i]+base_foot_poses[0][2] )
-            # print(" right_x: ",foot_pose[1][0][i]+base_foot_poses[1][0]," right_y: ",foot_pose[1][1][i]+base_foot_poses[1][1] ," right_z: ",foot_pose[1][2][i]+base_foot_poses[1][2] )
             angle_commands = [
                 AngleCommand("fl_joint1", -fl_theta1),
                 AngleCommand("fl_joint2", -fl_theta2),
-                # AngleCommand("fl_joint3", -2 * (fl_theta3)),
+                AngleCommand("fl_joint3", -2 * (fl_theta3)),
                 AngleCommand("fr_joint1", fr_theta1),
                 AngleCommand("fr_joint2", fr_theta2),
-                # AngleCommand("fr_joint3", -2 * (fr_theta3)),
+                AngleCommand("fr_joint3", 2 * (fr_theta3)),
                 AngleCommand("rl_joint1", rl_theta1),
                 AngleCommand("rl_joint2", rl_theta2),
                 AngleCommand("rl_joint3", 2 * (rl_theta3)),
@@ -77,7 +78,7 @@ def motor_control(foot_pose,step_count):
             while time.perf_counter() - start_time < motor_delay:
                 pass  # 원하는 시간만큼 대기
 
-    # motor_controller.close()
+    motor_controller.close()
 
 if __name__ == "__main__":
     driving_contoller()

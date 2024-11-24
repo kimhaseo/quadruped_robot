@@ -75,12 +75,23 @@ class Kinematics:
 
     def calculate_joint_angle(self, right_leg, x, y, z):
 
-        # # print(x,y,z)
-        # if right_leg == False:
-        #     y = y + self.L1
-        # else:
-        #     y = y - self.L1
-        #
+        x_min, x_max = -150, 150
+        if right_leg:
+            y_min, y_max = 10,130
+        else :
+            y_min, y_max = -130,-10
+        z_min, z_max = -350, -100
+
+        if not (x_min <= x <= x_max):
+            raise ValueError(f"x 값이 범위를 벗어났습니다: {x} (허용 범위: {x_min} ~ {x_max})")
+
+        # y 범위 검증
+        if not (y_min <= y <= y_max):
+            raise ValueError(f"y 값이 범위를 벗어났습니다: {y} (허용 범위: {y_min} ~ {y_max})")
+
+        # z 범위 검증
+        if not (z_min <= z <= z_max):
+            raise ValueError(f"z 값이 범위를 벗어났습니다: {z} (허용 범위: {z_min} ~ {z_max})")
 
         try:
             A = np.sqrt(y ** 2 + z ** 2)
@@ -123,33 +134,14 @@ class Kinematics:
 
 if __name__ == "__main__":
     # 테스트 입력 (roll, pitch, yaw 값은 도 단위)
-    roll = 0  # x축 회전 (degrees)
-    pitch = 10  # y축 회전 (degrees)
+    roll = 10  # x축 회전 (degrees)
+    pitch = 0  # y축 회전 (degrees)
     yaw = 0  # z축 회전 (degrees)
 
     kinematics = Kinematics()
     # new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw) - kinematics.hip_positions)
     new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw))
+    kinematics.calculate_joint_angle(False,*new_foot_positions[0])
 
-    print(new_foot_positions)
-
-
-    # for i, foot_position in enumerate(new_foot_positions):
-    #     if i % 2 == 0:  # 오른쪽 다리
-    #         right_leg = True
-    #     else:  # 왼쪽 다리
-    #         right_leg = False
-    #
-    #     # foot_position에서 x, y, z 분리
-    #     x, y, z = foot_position
-    #
-    #     print(f"다리 {i + 1}의 발 위치 (x, y, z): {foot_position}")
-    #
-    #     # calculate_joint_angle 함수에 x, y, z를 개별 인자로 전달
-    #     joint_angles = kinematics.calculate_joint_angle(right_leg, x, y, z)
-    #     if joint_angles:
-    #         print(f"다리 {i + 1} 관절 각도 (theta1, theta2, theta3): {joint_angles}")
-    #     else:
-    #         print(f"다리 {i + 1}의 관절 각도 계산 오류")
 
 
