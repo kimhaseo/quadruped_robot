@@ -12,8 +12,7 @@ class GaitPatternGenerator:
         :param height: 기본 발 위치 높이 (mm)
         """
         self.resolution = config.leg_resolution
-        # self.hz = self.resolution * 2
-        # self.motor_delay = 1 / self.hz
+
 
 
     def foot_trajectory(self, time, start_step, foot_direction ,speed, step_height):
@@ -24,119 +23,70 @@ class GaitPatternGenerator:
         :return: x, z 좌표 배열
         """
 
-        self.step_length = speed
+        self.step_length = speed * 0.75
         self.step_height = step_height
 
         if start_step == 1 :
 
             if foot_direction == "forward":
+                # x 좌표 설정
                 x = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    self.step_length/2 * (-1 + 2 * time / (2 / 2)),
-                    self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2))
+                    (0 <= time) & (time < 0.5),
+                    -self.step_length * (time / 0.5),  # 0에서 -step_length까지 감소
+                    np.where(
+                        (0.5 <= time) & (time < 1.0),
+                        -self.step_length * (1 - (time - 0.5) / 0.5),  # -step_length에서 0으로 증가
+                        np.where(
+                            (1.0 <= time) & (time < 1.5),
+                            self.step_length * ((time - 1.0) / 0.5),  # 0에서 step_length까지 증가
+                            self.step_length * (1 - (time - 1.5) / 0.5)  # step_length에서 0으로 감소
+                        )
+                    )
                 )
                 y = np.zeros_like(time)
                 z = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    self.step_height * np.sin(np.pi * time / (2 / 2)),
-                    0
-                )
-
-            elif foot_direction == "backward":
-                x = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    -self.step_length/2 * (-1 + 2 * time / (2 / 2)),
-                    -self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2))
-                )
-                y = np.zeros_like(time)
-                z = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    self.step_height * np.sin(np.pi * time / (2 / 2)),
-                    0
-                )
-
-            elif foot_direction == "left":
-
-                x = np.zeros_like(time)
-                y = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    -self.step_length/2 * (-1 + 2 * time / (2 / 2)),
-                    -self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2))
-                )
-                z = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    self.step_height * np.sin(np.pi * time / (2 / 2)),
-                    0
-                )
-
-            elif foot_direction == "right":
-
-                x = np.zeros_like(time)
-                y = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    self.step_length/2 * (-1 + 2 * time / (2 / 2)),
-                    self.step_length/2 * (1 - 2 * (time - 2 / 2) / (2 / 2))
-                )
-                z = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    self.step_height * np.sin(np.pi * time / (2 / 2)),
-                    0
+                    (0 <= time) & (time < 0.5),
+                    0,  # z는 0으로 유지
+                    np.where(
+                        (0.5 <= time) & (time < 1.0),
+                        self.step_height * ((time - 0.5) / 0.5),  # 0에서 step_height까지 증가
+                        np.where(
+                            (1.0 <= time) & (time < 1.5),
+                            self.step_height * (1 - (time - 1.0) / 0.5),  # step_height에서 0까지 감소
+                            0  # z는 0으로 유지
+                        )
+                    )
                 )
 
         elif start_step == 0 :
 
             if foot_direction == "forward":
                 x = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    self.step_length/2 * (1 - 2 * time / (2 / 2)),
-                    self.step_length/2 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
+                    (0 <= time) & (time < 0.5),
+                    self.step_length * (time / 0.5),  # 0에서 step_length까지 증가
+                    np.where(
+                        (0.5 <= time) & (time < 1.0),
+                        self.step_length * (1 - (time - 0.5) / 0.5),  # step_length에서 0으로 감소
+                        np.where(
+                            (1.0 <= time) & (time < 1.5),
+                            -self.step_length * ((time - 1.0) / 0.5),  # 0에서 -step_length까지 감소
+                            -self.step_length * (1 - (time - 1.5) / 0.5)  # -step_length에서 0으로 증가
+                        )
+                    )
                 )
                 y = np.zeros_like(time)
                 z = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    0,
-                    self.step_height * np.sin(np.pi * (time - 2 / 2) / (2 / 2))
-                )
-
-            if foot_direction == "backward":
-                x = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    -self.step_length/2 * (1 - 2 * time / (2 / 2)),
-                    -self.step_length/2 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
-                )
-                y = np.zeros_like(time)
-                z = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    0,
-                    self.step_height * np.sin(np.pi * (time - 2 / 2) / (2 / 2))
-                )
-
-            if foot_direction == "left":
-
-                x=np.zeros_like(time)
-                y = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    - self.step_length / 2 * (1 - 2 * time / (2 / 2)),
-                    - self.step_length / 2 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
-                )
-                z = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    0,
-                    self.step_height * np.sin(np.pi * (time - 2 / 2) / (2 / 2))
-                )
-
-            if foot_direction == "right":
-
-                x=np.zeros_like(time)
-                y = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    self.step_length / 2 * (1 - 2 * time / (2 / 2)),
-                    self.step_length / 2 * (-1 + 2 * (time - 2 / 2) / (2 / 2))
-                )
-                z = np.where(
-                    (0 <= time) & (time < 2 / 2),
-                    0,
-                    self.step_height * np.sin(np.pi * (time - 2 / 2) / (2 / 2))
+                    (0 <= time) & (time < 0.5),
+                    self.step_height * (1 - time / 0.5),  # step_height에서 0까지 선형적으로 감소
+                    np.where(
+                        (0.5 <= time) & (time < 1.0),
+                        0,  # z는 0으로 유지
+                        np.where(
+                            (1.0 <= time) & (time < 1.5),
+                            0,  # z는 0으로 유지
+                            self.step_height * ((time - 1.5) / 0.5)  # 0에서 step_height까지 증가
+                        )
+                    )
                 )
 
 
@@ -172,10 +122,12 @@ class GaitPatternGenerator:
         fr_coords  = self.foot_trajectory(time,0,foot_direction[1], self.speed , self.step_hight)
         rl_coords = self.foot_trajectory(time,0,foot_direction[2], self.speed , self.step_hight)
         rr_coords  = self.foot_trajectory(time,1,foot_direction[3], self.speed , self.step_hight)
+
+        print(fl_coords)
         return (fl_coords, fr_coords, rl_coords, rr_coords)
 
 
 if __name__ == "__main__":
 
     gpg=GaitPatternGenerator()
-    trajetory = gpg.generate_crawl_gait_pattern(10,10,"forward")
+    trajetory = gpg.generate_crawl_gait_pattern(60,20,"forward")
