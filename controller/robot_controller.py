@@ -57,12 +57,13 @@ class RobotController:
                 while time.perf_counter() - start_time < motor_delay:
                     pass
 
-        # Reset to base foot poses
-        self.reset_to_base_pose(base_foot_poses)
 
-    def reset_to_base_pose(self, base_foot_poses):
+    def pose_control(self, orientation):
+        base_foot_poses = self.inverse_kinematics.calculate_foot_position_with_orientation(*orientation)
         joint_angles = [
             self.inverse_kinematics.calculate_joint_angle(False, *base_foot_poses[0]),
+            self.inverse_kinematics.calculate_joint_angle(True, *base_foot_poses[1]),
+            self.inverse_kinematics.calculate_joint_angle(True, *base_foot_poses[2]),
             self.inverse_kinematics.calculate_joint_angle(True, *base_foot_poses[3]),
         ]
 
@@ -70,9 +71,15 @@ class RobotController:
             AngleCommand("fl_joint1", -joint_angles[0][0]),
             AngleCommand("fl_joint2", -joint_angles[0][1]),
             AngleCommand("fl_joint3", -2 * joint_angles[0][2]),
-            AngleCommand("rr_joint1", joint_angles[1][0]),
-            AngleCommand("rr_joint2", joint_angles[1][1]),
-            AngleCommand("rr_joint3", 2 * joint_angles[1][2]),
+            AngleCommand("fr_joint1", joint_angles[1][0]),
+            AngleCommand("fr_joint2", joint_angles[1][1]),
+            AngleCommand("fr_joint3", 2 * joint_angles[1][2]),
+            AngleCommand("rl_joint1", -joint_angles[2][0]),
+            AngleCommand("rl_joint2", -joint_angles[2][1]),
+            AngleCommand("rl_joint3", -2 * joint_angles[2][2]),
+            AngleCommand("rr_joint1", joint_angles[3][0]),
+            AngleCommand("rr_joint2", joint_angles[3][1]),
+            AngleCommand("rr_joint3", 2 * joint_angles[3][2]),
         ]
 
         self.motor_controller.move_motors(angle_commands)
@@ -99,7 +106,7 @@ class RobotController:
             foot_poses = self.generate_foot_poses(adjusted_speed, step_height, motion)
             self.motor_control(foot_poses, 1, base_foot_poses)
 
-        self.reset_to_base_pose(base_foot_poses)
+        self.pose_control(base_foot_poses)
 
 # 사용 예시:
 if __name__ == "__main__":
