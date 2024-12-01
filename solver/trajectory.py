@@ -1,6 +1,8 @@
+from turtle import TurtleGraphicsError
+
 import numpy as np
 from config import config
-
+from solver import inverse
 
 class GaitPatternGenerator:
     def __init__(self):
@@ -123,11 +125,39 @@ class GaitPatternGenerator:
         rl_coords = self.foot_trajectory(time,0,foot_direction[2], self.speed , self.step_hight)
         rr_coords  = self.foot_trajectory(time,1,foot_direction[3], self.speed , self.step_hight)
 
-        print(fl_coords)
         return (fl_coords, fr_coords, rl_coords, rr_coords)
 
+    def generate_point_trajectory(self, goal_point, start_point):
+
+        goal_point = np.array(goal_point)
+        start_point = np.array(start_point)
+        delta = goal_point - start_point
+        # 분해능에 따라 이동 단계 계산goal_point
+        steps = np.linspace(0, 1,self.resolution)
+        # 경로 생성
+        trajectory = [start_point + step * delta for step in steps]
+        return trajectory
 
 if __name__ == "__main__":
 
     gpg=GaitPatternGenerator()
+    ik=inverse.Kinematics()
     trajetory = gpg.generate_crawl_gait_pattern(60,20,"forward")
+
+    start = np.array([0.0, 0.0, 0.0])  # 초기 포즈 (x, y, z)
+    goal = np.array([0.5, 0.2, 0.3])  # 목표 포즈 (x, y, z)
+
+
+    fl_trajectory = gpg.generate_point_trajectory(config.init_pose["fl_coord"], config.start_pose["fl_coord"])
+
+    # print(trajetory)
+    for i in range(200):
+
+        fl_theta1,fl_theta2,fl_theta3 = ik.calculate_joint_angle(False,fl_trajectory[i][0],fl_trajectory[i][1],fl_trajectory[i][2])
+        fr_theta1,fr_theta2,fr_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
+        rl_theta1,rl_theta2,rl_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
+        rr_theta1,rr_theta2,rr_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
+
+
+
+

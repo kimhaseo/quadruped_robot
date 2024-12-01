@@ -80,7 +80,7 @@ class Kinematics:
             y_min, y_max = 10,130
         else :
             y_min, y_max = -130,-10
-        z_min, z_max = -350, -100
+        z_min, z_max = -350, -70
 
         if not (x_min <= x <= x_max):
             raise ValueError(f"x 값이 범위를 벗어났습니다: {x} (허용 범위: {x_min} ~ {x_max})")
@@ -140,7 +140,9 @@ if __name__ == "__main__":
 
     kinematics = Kinematics()
     new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw))
-    angle = kinematics.calculate_joint_angle(False,*new_foot_positions[0])
+    # angle = kinematics.calculate_joint_angle(False,*new_foot_positions[0])
 
+    test =  kinematics.calculate_joint_angle(True , 0, 89, -250)
+    print(test)
 
 
