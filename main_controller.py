@@ -5,7 +5,7 @@ from solver.inverse import Kinematics
 from controller.motor_controller import MotorController
 from config import config
 
-def init_robot():
+def pose_control():
 
     fl_trajectory = gpg.generate_point_trajectory(config.init_pose["fl_coord"], config.start_pose["fl_coord"])
     fr_trajectory = gpg.generate_point_trajectory(config.init_pose["fr_coord"], config.start_pose["fr_coord"])
@@ -35,8 +35,10 @@ def init_robot():
         ]
         mc.move_motors(angle_commands)
 
-def main():
+## 주행 , 포즈 변경(타겟 포즈) ,
 
+def main():
+    init_robot()
     rc.drive(robot_speed=120, distance=2400, step_height=50, motion="forward", orientation=[0, 0, 0])
 
 

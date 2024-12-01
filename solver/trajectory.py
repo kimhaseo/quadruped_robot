@@ -147,17 +147,17 @@ if __name__ == "__main__":
     start = np.array([0.0, 0.0, 0.0])  # 초기 포즈 (x, y, z)
     goal = np.array([0.5, 0.2, 0.3])  # 목표 포즈 (x, y, z)
 
+    foot_pose= ik.calculate_foot_position_with_orientation(10,0,0)
+    fl_trajectory = gpg.generate_point_trajectory(foot_pose[0], config.start_pose["fl_coord"])
+    print(fl_trajectory[199])
 
-    fl_trajectory = gpg.generate_point_trajectory(config.init_pose["fl_coord"], config.start_pose["fl_coord"])
-
-    # print(trajetory)
-    for i in range(200):
-
-        fl_theta1,fl_theta2,fl_theta3 = ik.calculate_joint_angle(False,fl_trajectory[i][0],fl_trajectory[i][1],fl_trajectory[i][2])
-        fr_theta1,fr_theta2,fr_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
-        rl_theta1,rl_theta2,rl_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
-        rr_theta1,rr_theta2,rr_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
-
-
-
+    # for i in range(200):
+    #
+    #     fl_theta1,fl_theta2,fl_theta3 = ik.calculate_joint_angle(False,fl_trajectory[i][0],fl_trajectory[i][1],fl_trajectory[i][2])
+    #     fr_theta1,fr_theta2,fr_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
+    #     rl_theta1,rl_theta2,rl_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
+    #     rr_theta1,rr_theta2,rr_theta3 = ik.calculate_joint_angle(False, fl_trajectory[i][0], fl_trajectory[i][1],fl_trajectory[i][2])
+    #
+    #
+    #
 
