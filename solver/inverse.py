@@ -141,7 +141,7 @@ if __name__ == "__main__":
     kinematics = Kinematics()
     new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw))
     # angle = kinematics.calculate_joint_angle(False,*new_foot_positions[0])
-
+    #
     # test =  kinematics.calculate_joint_angle(True , 0, 89, -250)
     print(new_foot_positions)
 

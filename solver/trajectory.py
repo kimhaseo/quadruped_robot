@@ -1,10 +1,8 @@
-from turtle import TurtleGraphicsError
-
 import numpy as np
-from config import config
+from config import config,pose_cmd
 from solver import inverse
 
-class GaitPatternGenerator:
+class TrajectoryGenerator:
     def __init__(self):
         """
         Gait Pattern Generator 초기화.
@@ -15,9 +13,7 @@ class GaitPatternGenerator:
         """
         self.resolution = config.leg_resolution
 
-
-
-    def foot_trajectory(self, time, start_step, foot_direction ,speed, step_height):
+    def move_foot_trajectory(self, time, start_step, foot_direction ,speed, step_height):
         """
         한쪽 발의 궤적 계산.
         :param time: 시간 배열
@@ -92,9 +88,9 @@ class GaitPatternGenerator:
                 )
 
 
-        return np.array(x), np.array(y) , np.array(z)
+        return np.stack((x, y, z), axis=1)
 
-    def generate_crawl_gait_pattern(self, speed, step_hight, robot_motion):
+    def generate_move_trajectory(self, speed, step_hight, robot_motion):
 
         self.speed = speed
         self.step_hight = step_hight
@@ -120,14 +116,14 @@ class GaitPatternGenerator:
             foot_direction = ["forward","backward","forward","backward"]
 
 
-        fl_coords  = self.foot_trajectory(time,1,foot_direction[0], self.speed , self.step_hight)
-        fr_coords  = self.foot_trajectory(time,0,foot_direction[1], self.speed , self.step_hight)
-        rl_coords = self.foot_trajectory(time,0,foot_direction[2], self.speed , self.step_hight)
-        rr_coords  = self.foot_trajectory(time,1,foot_direction[3], self.speed , self.step_hight)
+        fl_coords  = self.move_foot_trajectory(time,1,foot_direction[0], self.speed , self.step_hight)
+        fr_coords  = self.move_foot_trajectory(time,0,foot_direction[1], self.speed , self.step_hight)
+        rl_coords = self.move_foot_trajectory(time,0,foot_direction[2], self.speed , self.step_hight)
+        rr_coords  = self.move_foot_trajectory(time,1,foot_direction[3], self.speed , self.step_hight)
 
         return (fl_coords, fr_coords, rl_coords, rr_coords)
 
-    def generate_point_trajectory(self, goal_point, start_point):
+    def pose_foot_trajectory(self, goal_point, start_point):
 
         goal_point = np.array(goal_point)
         start_point = np.array(start_point)
@@ -135,22 +131,36 @@ class GaitPatternGenerator:
         # 분해능에 따라 이동 단계 계산goal_point
         steps = np.linspace(0, 1,self.resolution)
         # 경로 생성
-        trajectory = [start_point + step * delta for step in steps]
-        return trajectory
+        foot_trajectory = [start_point + step * delta for step in steps]
+        return foot_trajectory
+
+    def generate_pose_trajectory(self,target_pose,current_pose):
+
+        fl_coords = self.pose_foot_trajectory(target_pose['fl_coord'],current_pose['fl_coord'])
+        fr_coords = self.pose_foot_trajectory(target_pose['fr_coord'],current_pose['fr_coord'])
+        rl_coords = self.pose_foot_trajectory(target_pose['rl_coord'],current_pose['rl_coord'])
+        rr_coords = self.pose_foot_trajectory(target_pose['rr_coord'],current_pose['rr_coord'])
+        
+        return fl_coords,fr_coords,rl_coords,rr_coords
+
+
 
 if __name__ == "__main__":
 
-    gpg=GaitPatternGenerator()
+    tg=TrajectoryGenerator()
     ik=inverse.Kinematics()
-    trajetory = gpg.generate_crawl_gait_pattern(60,20,"forward")
+    trajetory = tg.generate_move_trajectory(60,20,"forward")
+    target_pose = config.init_pose
+    pc = pose_cmd.PoseCommand()
+    current_pose =pc.get_pose()
+    pose_trajectory = tg.generate_pose_trajectory(target_pose,current_pose)
 
-    start = np.array([0.0, 0.0, 0.0])  # 초기 포즈 (x, y, z)
-    goal = np.array([0.5, 0.2, 0.3])  # 목표 포즈 (x, y, z)
-
-    foot_pose= ik.calculate_foot_position_with_orientation(10,0,0)
-    fl_trajectory = gpg.generate_point_trajectory(foot_pose[0], config.start_pose["fl_coord"])
-    print(fl_trajectory[199])
-
+    # start = np.array([0.0, 0.0, 0.0])  # 초기 포즈 (x, y, z)
+    # goal = np.array([0.5, 0.2, 0.3])  # 목표 포즈 (x, y, z)
+    #
+    # foot_pose= ik.calculate_foot_position_with_orientation(10,0,0)
+    # fl_trajectory = tg.pose_foot_trajectory(foot_pose[0], config.start_pose["fl_coord"])
+    # print(fl_trajectory[0])
     # for i in range(200):
     #
     #     fl_theta1,fl_theta2,fl_theta3 = ik.calculate_joint_angle(False,fl_trajectory[i][0],fl_trajectory[i][1],fl_trajectory[i][2])

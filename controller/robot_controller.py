@@ -1,4 +1,4 @@
-from solver.trajectory import GaitPatternGenerator
+from solver.trajectory import TrajectoryGenerator
 from solver.inverse import Kinematics
 from config.config import leg_resolution
 from config.motor_cmd import AngleCommand
@@ -11,14 +11,14 @@ class RobotController:
     def __init__(self):
         self.inverse_kinematics = Kinematics()
         self.motor_controller = MotorController()
-        self.pattern_generator = GaitPatternGenerator()
+        self.trajectory_generator = TrajectoryGenerator()
 
     def calculate_steps(self, robot_speed, distance):
         step_count = distance / robot_speed
         return step_count
 
     def generate_foot_poses(self, speed, step_height, motion):
-        return self.pattern_generator.generate_crawl_gait_pattern(speed, step_height, motion)
+        return self.trajectory_generator.generate_move_trajectory(speed, step_height, motion)
 
     def motor_control(self, foot_poses, step_count, base_foot_poses):
         num_steps = leg_resolution
@@ -57,33 +57,35 @@ class RobotController:
                 while time.perf_counter() - start_time < motor_delay:
                     pass
 
+    def joint_control(self,target_foot_poses):
+        num_steps = leg_resolution
+        motor_delay = 1 / (leg_resolution * 1.5)
 
-    def pose_control(self, orientation):
-        base_foot_poses = self.inverse_kinematics.calculate_foot_position_with_orientation(*orientation)
-        joint_angles = [
-            self.inverse_kinematics.calculate_joint_angle(False, *base_foot_poses[0]),
-            self.inverse_kinematics.calculate_joint_angle(True, *base_foot_poses[1]),
-            self.inverse_kinematics.calculate_joint_angle(True, *base_foot_poses[2]),
-            self.inverse_kinematics.calculate_joint_angle(True, *base_foot_poses[3]),
-        ]
+        for i in range(num_steps):
+            start_time = time.perf_counter()
 
-        angle_commands = [
-            AngleCommand("fl_joint1", -joint_angles[0][0]),
-            AngleCommand("fl_joint2", -joint_angles[0][1]),
-            AngleCommand("fl_joint3", -2 * joint_angles[0][2]),
-            AngleCommand("fr_joint1", joint_angles[1][0]),
-            AngleCommand("fr_joint2", joint_angles[1][1]),
-            AngleCommand("fr_joint3", 2 * joint_angles[1][2]),
-            AngleCommand("rl_joint1", -joint_angles[2][0]),
-            AngleCommand("rl_joint2", -joint_angles[2][1]),
-            AngleCommand("rl_joint3", -2 * joint_angles[2][2]),
-            AngleCommand("rr_joint1", joint_angles[3][0]),
-            AngleCommand("rr_joint2", joint_angles[3][1]),
-            AngleCommand("rr_joint3", 2 * joint_angles[3][2]),
-        ]
+            joint_angles = [
+                self.inverse_kinematics.calculate_joint_angle(False,target_foot_poses[0][0],target_foot_poses[0][1],target_foot_poses[0][2]),
+                self.inverse_kinematics.calculate_joint_angle(False, target_foot_poses[1][0], target_foot_poses[1][1],target_foot_poses[1][2]),
+                self.inverse_kinematics.calculate_joint_angle(False, target_foot_poses[2][0], target_foot_poses[2][1],target_foot_poses[2][2]),
+                self.inverse_kinematics.calculate_joint_angle(False, target_foot_poses[3][0], target_foot_poses[3][1],target_foot_poses[3][2])
+                ]
 
-        self.motor_controller.move_motors(angle_commands)
-        self.motor_controller.close()
+
+
+            angle_commands = [
+                AngleCommand("fl_joint1", -joint_angles[0][0]),
+                AngleCommand("fl_joint2", -joint_angles[0][1]),
+                AngleCommand("fl_joint3", -2 * joint_angles[0][2]),
+                AngleCommand("fr_joint1", joint_angles[1][0]),
+                AngleCommand("fr_joint2", joint_angles[1][1]),
+                AngleCommand("fr_joint3", 2 * joint_angles[1][2]),
+            ]
+
+            self.motor_controller.move_motors(angle_commands)
+
+            while time.perf_counter() - start_time < motor_delay:
+                pass
 
     def drive(self, robot_speed, distance, step_height, motion, orientation):
         base_foot_poses = self.inverse_kinematics.calculate_foot_position_with_orientation(*orientation)
@@ -106,7 +108,6 @@ class RobotController:
             foot_poses = self.generate_foot_poses(adjusted_speed, step_height, motion)
             self.motor_control(foot_poses, 1, base_foot_poses)
 
-        self.pose_control(base_foot_poses)
 
 # 사용 예시:
 if __name__ == "__main__":

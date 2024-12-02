@@ -26,3 +26,10 @@ start_pose = {
     "rl_coord": [0.0, -leg_length["L1"], -70],
     "rr_coord": [0.0, leg_length["L1"], -70],
 }
+
+current_pose = {
+    "fl_coord": [0.0, -leg_length["L1"], -70],  # 관절 각도
+    "fr_coord": [0.0, leg_length["L1"], -70],
+    "rl_coord": [0.0, -leg_length["L1"], -70],
+    "rr_coord": [0.0, leg_length["L1"], -70],
+}
