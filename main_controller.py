@@ -1,4 +1,4 @@
-from controller.robot_controller import RobotController
+from controller.motion_controller import RobotController
 from solver.trajectory import GaitPatternGenerator
 from config.motor_cmd import MotorCommand, AngleCommand
 from solver.inverse import Kinematics
