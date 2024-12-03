@@ -1,3 +1,4 @@
+import config.config
 from solver.trajectory import TrajectoryGenerator
 from solver.inverse import Kinematics
 from config.config import leg_resolution
@@ -11,7 +12,7 @@ import math
 class MotionController:
     def __init__(self):
         self.inverse_kinematics = Kinematics()
-        self.motor_controller = MotorController()
+        # self.motor_controller = MotorController()
         self.trajectory_generator = TrajectoryGenerator()
         self.pose_command = PoseCommand()
 
@@ -110,17 +111,50 @@ class MotionController:
     #         foot_poses = self.generate_foot_poses(adjusted_speed, step_height, motion)
     #         self.motor_control(foot_poses, 1, base_foot_poses)
 
+
     "---------------------------"
 
     def pose_control(self, target_pose):
 
         current_pose = self.pose_command.get_pose()
-        self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
+        coords = self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
+
+        return coords
+
+    def joint_control(self,coords,speed,resolution):
+
+        delay = 0.7 / (resolution/speed)
+
+        for i in range(resolution):
+
+            print(coords[0][i])
+            fl_degree1, fl_degree2, fl_degree3 = self.inverse_kinematics.calculate_joint_angle(False, *coords[0][i])
+            fr_degree1, fr_degree2, fr_degree3 = self.inverse_kinematics.calculate_joint_angle(True, *coords[1][i])
+            rl_degree1, rl_degree2, rl_degree3 = self.inverse_kinematics.calculate_joint_angle(False, *coords[2][i])
+            rr_degree1, rr_degree2, rr_degree3 = self.inverse_kinematics.calculate_joint_angle(True, *coords[3][i])
 
 
-
+            angle_commands = [
+                AngleCommand("fl_joint1", -fl_degree1),
+                AngleCommand("fl_joint2", -fl_degree2),
+                AngleCommand("fl_joint3", -2 * fl_degree3),
+                AngleCommand("fr_joint1", fr_degree1),
+                AngleCommand("fr_joint2", fr_degree2),
+                AngleCommand("fr_joint3", 2 * fr_degree3),
+                AngleCommand("rl_joint1", -rl_degree1),
+                AngleCommand("rl_joint2", -rl_degree2),
+                AngleCommand("rl_joint3", -2 * rl_degree3),
+                AngleCommand("rr_joint1", rr_degree1),
+                AngleCommand("rr_joint2", rr_degree2),
+                AngleCommand("rr_joint3", 2 * rr_degree3),
+            ]
+            print(angle_commands[1],angle_commands[2])
+            # self.motor_controller.move_motors(angle_commands)
+            time.sleep(delay)
 
 if __name__ == "__main__":
     controller = MotionController()
-    # time.sleep(2)
-    # controller.drive(robot_speed=120, distance=2400, step_height=50, motion="forward", orientation=[0, 0, 0])
+    target_pose = config.config.init_pose
+    coords = controller.pose_control(target_pose)
+
+    controller.joint_control(coords,1,200)
