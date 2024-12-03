@@ -13,23 +13,24 @@ body_dimensions = {
 
 leg_resolution = 200
 
+hip_pose = {
+    "fl_hip": [body_dimensions["length"]/2, -body_dimensions["width"]/2, 0],
+    "fr_hip": [body_dimensions["length"]/2, body_dimensions["width"]/2, 0],
+    "rl_hip": [-body_dimensions["length"]/2, -body_dimensions["width"]/2, 0],
+    "rr_hip": [-body_dimensions["length"]/2, body_dimensions["width"]/2, 0],
+}
+
 init_pose = {
-    "fl_coord": [0.0, -leg_length["L1"], -body_dimensions["height"]],  # 관절 각도
-    "fr_coord": [0.0, leg_length["L1"], -body_dimensions["height"]],
-    "rl_coord": [0.0, -leg_length["L1"], -body_dimensions["height"]],
-    "rr_coord": [0.0, leg_length["L1"], -body_dimensions["height"]],
+    "fl_foot": [hip_pose["fl_hip"][0], -leg_length["L1"] + hip_pose["fl_hip"][1], -body_dimensions["height"]],
+    "fr_foot": [hip_pose["fr_hip"][0], leg_length["L1"] + hip_pose["fr_hip"][1], -body_dimensions["height"]],
+    "rl_foot": [hip_pose["rl_hip"][0], -leg_length["L1"] + hip_pose["rl_hip"][1], -body_dimensions["height"]],
+    "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -body_dimensions["height"]],
 }
 
 start_pose = {
-    "fl_coord": [0.0, -leg_length["L1"], -70],  # 관절 각도
-    "fr_coord": [0.0, leg_length["L1"], -70],
-    "rl_coord": [0.0, -leg_length["L1"], -70],
-    "rr_coord": [0.0, leg_length["L1"], -70],
+    "fl_foot": [hip_pose["fl_hip"][0], -leg_length["L1"] + hip_pose["fl_hip"][1], -70],
+    "fr_foot": [hip_pose["fr_hip"][0], leg_length["L1"] + hip_pose["fr_hip"][1], -70],
+    "rl_foot": [hip_pose["rl_hip"][0], -leg_length["L1"] + hip_pose["rl_hip"][1], -70],
+    "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -70],
 }
 
-current_pose = {
-    "fl_coord": [0.0, -leg_length["L1"], -70],  # 관절 각도
-    "fr_coord": [0.0, leg_length["L1"], -70],
-    "rl_coord": [0.0, -leg_length["L1"], -70],
-    "rr_coord": [0.0, leg_length["L1"], -70],
-}

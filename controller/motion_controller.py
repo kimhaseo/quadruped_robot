@@ -1,12 +1,13 @@
 import config.config
 from solver.trajectory import TrajectoryGenerator
 from solver.inverse import Kinematics
-from config.config import leg_resolution
+from config.config import leg_resolution,hip_pose
 from config.motor_cmd import AngleCommand
 from controller.motor_controller import MotorController
 from config.pose_cmd import PoseCommand
 import time
 import math
+import numpy as np
 
 
 class MotionController:
@@ -119,6 +120,7 @@ class MotionController:
         current_pose = self.pose_command.get_pose()
         coords = self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
 
+
         return coords
 
     def joint_control(self,coords,speed,resolution):
@@ -127,11 +129,15 @@ class MotionController:
 
         for i in range(resolution):
 
-            print(coords[0][i])
-            fl_degree1, fl_degree2, fl_degree3 = self.inverse_kinematics.calculate_joint_angle(False, *coords[0][i])
-            fr_degree1, fr_degree2, fr_degree3 = self.inverse_kinematics.calculate_joint_angle(True, *coords[1][i])
-            rl_degree1, rl_degree2, rl_degree3 = self.inverse_kinematics.calculate_joint_angle(False, *coords[2][i])
-            rr_degree1, rr_degree2, rr_degree3 = self.inverse_kinematics.calculate_joint_angle(True, *coords[3][i])
+            fl_foot = (np.array(coords[0][i]) - np.array(hip_pose["fl_hip"]))
+            fr_foot = (np.array(coords[1][i]) - np.array(hip_pose["fr_hip"]))
+            rl_foot = (np.array(coords[2][i]) - np.array(hip_pose["rl_hip"]))
+            rr_foot = (np.array(coords[3][i]) - np.array(hip_pose["rr_hip"]))
+
+            fl_degree1, fl_degree2, fl_degree3 = self.inverse_kinematics.calculate_joint_angle(False, *fl_foot)
+            fr_degree1, fr_degree2, fr_degree3 = self.inverse_kinematics.calculate_joint_angle(True, *fr_foot)
+            rl_degree1, rl_degree2, rl_degree3 = self.inverse_kinematics.calculate_joint_angle(False, *rl_foot)
+            rr_degree1, rr_degree2, rr_degree3 = self.inverse_kinematics.calculate_joint_angle(True, *rr_foot)
 
 
             angle_commands = [
@@ -156,5 +162,4 @@ if __name__ == "__main__":
     controller = MotionController()
     target_pose = config.config.init_pose
     coords = controller.pose_control(target_pose)
-
     controller.joint_control(coords,1,200)

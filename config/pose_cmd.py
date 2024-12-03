@@ -1,32 +1,33 @@
 from dataclasses import dataclass, field
+from config.config import start_pose
 
 @dataclass
 class PoseCommand:
-    fl_coord: list = field(default_factory=lambda: [0.0, 0.0, 0.0])  # 앞 왼쪽 다리
-    fr_coord: list = field(default_factory=lambda: [0.0, 0.0, 0.0])  # 앞 오른쪽 다리
-    rl_coord: list = field(default_factory=lambda: [0.0, 0.0, 0.0])  # 뒤 왼쪽 다리
-    rr_coord: list = field(default_factory=lambda: [0.0, 0.0, 0.0])  # 뒤 오른쪽 다리
+    fl_foot: list = field(default_factory=lambda: [start_pose["fl_foot"][0], start_pose["fl_foot"][1], start_pose["fl_foot"][2]])  # 앞 왼쪽 다리
+    fr_foot: list = field(default_factory=lambda: [start_pose["fr_foot"][0], start_pose["fr_foot"][1], start_pose["fr_foot"][2]])  # 앞 오른쪽 다리
+    rl_foot: list = field(default_factory=lambda: [start_pose["rl_foot"][0], start_pose["rl_foot"][1], start_pose["rl_foot"][2]])  # 뒤 왼쪽 다리
+    rr_foot: list = field(default_factory=lambda: [start_pose["rr_foot"][0], start_pose["rr_foot"][1], start_pose["rr_foot"][2]])  # 뒤 오른쪽 다리
 
     def update_pose(self, leg_name: str, coords: list):
         """지정된 다리의 좌표를 업데이트"""
-        if leg_name == "fl_coord":
-            self.fl_coord = coords
-        elif leg_name == "fr_coord":
-            self.fr_coord = coords
-        elif leg_name == "rl_coord":
-            self.rl_coord = coords
-        elif leg_name == "rr_coord":
-            self.rr_coord = coords
+        if leg_name == "fl_foot":
+            self.fl_foot = coords
+        elif leg_name == "fr_foot":
+            self.fr_foot = coords
+        elif leg_name == "rl_foot":
+            self.rl_foot = coords
+        elif leg_name == "rr_foot":
+            self.rr_foot = coords
         else:
             print(f"Invalid leg name: {leg_name}")
 
     def get_pose(self):
         """현재 포즈 가져오기"""
         return {
-            "fl_coord": self.fl_coord,
-            "fr_coord": self.fr_coord,
-            "rl_coord": self.rl_coord,
-            "rr_coord": self.rr_coord
+            "fl_foot": self.fl_foot,
+            "fr_foot": self.fr_foot,
+            "rl_foot": self.rl_foot,
+            "rr_foot": self.rr_foot
         }
 
 class PoseManager:

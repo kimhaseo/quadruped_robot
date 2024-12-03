@@ -136,10 +136,10 @@ class TrajectoryGenerator:
 
     def generate_pose_trajectory(self,target_pose,current_pose):
 
-        fl_coords = self.pose_foot_trajectory(target_pose['fl_coord'],current_pose['fl_coord'])
-        fr_coords = self.pose_foot_trajectory(target_pose['fr_coord'],current_pose['fr_coord'])
-        rl_coords = self.pose_foot_trajectory(target_pose['rl_coord'],current_pose['rl_coord'])
-        rr_coords = self.pose_foot_trajectory(target_pose['rr_coord'],current_pose['rr_coord'])
+        fl_coords = self.pose_foot_trajectory(target_pose['fl_foot'],current_pose['fl_foot'])
+        fr_coords = self.pose_foot_trajectory(target_pose['fr_foot'],current_pose['fr_foot'])
+        rl_coords = self.pose_foot_trajectory(target_pose['rl_foot'],current_pose['rl_foot'])
+        rr_coords = self.pose_foot_trajectory(target_pose['rr_foot'],current_pose['rr_foot'])
         
         return fl_coords,fr_coords,rl_coords,rr_coords
 
