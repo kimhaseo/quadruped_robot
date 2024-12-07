@@ -80,7 +80,7 @@ class Kinematics:
             y_min, y_max = 10,130
         else :
             y_min, y_max = -130,-10
-        z_min, z_max = -350, -70
+        z_min, z_max = -350, -50
 
         if not (x_min <= x <= x_max):
             raise ValueError(f"x 값이 범위를 벗어났습니다: {x} (허용 범위: {x_min} ~ {x_max})")
@@ -123,7 +123,7 @@ class Kinematics:
             theta3 = round(theta3, 2)
 
             # 범위 체크
-            if abs(theta1) > 20 or abs(theta2) > 90 or abs(theta3) > 160:
+            if abs(theta1) > 20 or abs(theta2) > 90 or abs(theta3) > 170:
                 raise ValueError(f"Invalid joint angles: theta1={theta1}, theta2={theta2}, theta3={theta3}")
 
             return theta1, theta2, theta3
@@ -134,15 +134,15 @@ class Kinematics:
 
 if __name__ == "__main__":
     # 테스트 입력 (roll, pitch, yaw 값은 도 단위)
-    roll = 0  # x축 회전 (degrees)
-    pitch = 0  # y축 회전 (degrees)
-    yaw = 0  # z축 회전 (degrees)
-
+    # roll = 0  # x축 회전 (degrees)
+    # pitch = 0  # y축 회전 (degrees)
+    # yaw = 0  # z축 회전 (degrees)
+    #
     kinematics = Kinematics()
-    new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw))
+    # new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw))
     # angle = kinematics.calculate_joint_angle(False,*new_foot_positions[0])
     #
-    # test =  kinematics.calculate_joint_angle(True , 0, 89, -250)
-    print(new_foot_positions)
+    test =  kinematics.calculate_joint_angle(False , 0, -89, -60)
+    print(test)
 
 

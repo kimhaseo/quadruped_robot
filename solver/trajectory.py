@@ -136,12 +136,12 @@ class TrajectoryGenerator:
 
     def generate_pose_trajectory(self,target_pose,current_pose):
 
-        fl_coords = self.pose_foot_trajectory(target_pose['fl_foot'],current_pose['fl_foot'])
-        fr_coords = self.pose_foot_trajectory(target_pose['fr_foot'],current_pose['fr_foot'])
-        rl_coords = self.pose_foot_trajectory(target_pose['rl_foot'],current_pose['rl_foot'])
-        rr_coords = self.pose_foot_trajectory(target_pose['rr_foot'],current_pose['rr_foot'])
+        fl_foot_coords = self.pose_foot_trajectory(target_pose['fl_foot'],current_pose['fl_foot'])
+        fr_foot_coords = self.pose_foot_trajectory(target_pose['fr_foot'],current_pose['fr_foot'])
+        rl_foot_coords = self.pose_foot_trajectory(target_pose['rl_foot'],current_pose['rl_foot'])
+        rr_foot_coords = self.pose_foot_trajectory(target_pose['rr_foot'],current_pose['rr_foot'])
         
-        return fl_coords,fr_coords,rl_coords,rr_coords
+        return fl_foot_coords,fr_foot_coords,rl_foot_coords,rr_foot_coords
 
 
 
@@ -150,10 +150,11 @@ if __name__ == "__main__":
     tg=TrajectoryGenerator()
     ik=inverse.Kinematics()
     trajetory = tg.generate_move_trajectory(60,20,"forward")
-    target_pose = config.init_pose
-    pc = pose_cmd.PoseCommand()
-    current_pose =pc.get_pose()
-    pose_trajectory = tg.generate_pose_trajectory(target_pose,current_pose)
+    print(trajetory)
+    # target_pose = config.init_pose
+    # pc = pose_cmd.PoseCommand()
+    # current_pose =pc.get_pose()
+    # pose_trajectory = tg.generate_pose_trajectory(target_pose,current_pose)
 
     # start = np.array([0.0, 0.0, 0.0])  # 초기 포즈 (x, y, z)
     # goal = np.array([0.5, 0.2, 0.3])  # 목표 포즈 (x, y, z)
