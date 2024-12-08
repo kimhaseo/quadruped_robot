@@ -21,7 +21,7 @@ class TrajectoryGenerator:
         :return: x, z 좌표 배열
         """
 
-        self.step_length = speed * 0.75
+        self.step_length = speed
         self.step_height = step_height
 
         if start_step == 1 :
