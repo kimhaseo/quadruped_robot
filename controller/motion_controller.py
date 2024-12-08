@@ -6,9 +6,7 @@ from config.motor_cmd import AngleCommand
 from controller.motor_controller import MotorController
 from config.pose_cmd import PoseCommand
 import time
-import math
 import numpy as np
-from datetime import datetime
 
 
 class MotionController:
@@ -22,7 +20,6 @@ class MotionController:
 
         current_pose = self.pose_command.get_pose()
         coords = self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
-        # print(current_pose)
         self.joint_control(coords,leg_resolution)
 
     def move_contorl(self, speed, step_hight, distance, robot_motion):
@@ -94,13 +91,13 @@ class MotionController:
 
             for foot, position in feet_positions.items():
                 self.pose_command.update_pose(foot, position)
-        print(self.pose_command.get_pose)
-
+            # print(self.pose_command.get_pose())
 
 if __name__ == "__main__":
     controller = MotionController()
     target_pose = config.config.init_pose
     controller.pose_control(target_pose)
-    controller.move_contorl(50,50,120,"forward")
+    controller.move_contorl(50,30,50,"forward")
+    controller.move_contorl(50,30,50,"backward")
     controller.pose_control(target_pose)
 
