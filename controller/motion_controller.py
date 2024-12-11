@@ -57,7 +57,7 @@ class MotionController:
             rl_foot = (np.array(coords[2][i]) - np.array(hip_pose["rl_hip"]))
             rr_foot = (np.array(coords[3][i]) - np.array(hip_pose["rr_hip"]))
 
-            print(fl_foot,fr_foot)
+            # print(fl_foot,fr_foot)
 
             fl_degree1, fl_degree2, fl_degree3 = self.inverse_kinematics.calculate_joint_angle(False, *fl_foot)
             fr_degree1, fr_degree2, fr_degree3 = self.inverse_kinematics.calculate_joint_angle(True, *fr_foot)
