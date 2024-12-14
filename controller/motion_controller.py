@@ -7,7 +7,7 @@ from solver.inverse import Kinematics
 from config.config import leg_resolution,hip_pose
 from config.motor_cmd import AngleCommand
 from controller.motor_controller import MotorController
-from config.pose_cmd import PoseCommand
+from manager.pose_manager import pose_cmd
 import time
 import numpy as np
 
@@ -17,17 +17,16 @@ class MotionController:
         self.inverse_kinematics = Kinematics()
         # self.motor_controller = MotorController()
         self.trajectory_generator = TrajectoryGenerator()
-        self.pose_command = PoseCommand()
-
+        self.pose_cmd = pose_cmd
     def pose_control(self, target_pose):
 
-        current_pose = self.pose_command.get_pose()
+        current_pose = self.pose_cmd.get_pose()
         coords = self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
-        self.joint_control(coords,leg_resolution)
+        self.joint_control(coords,leg_resolution,2)
 
     def move_contorl(self, speed, step_hight, distance, robot_motion):
 
-        current_pose= self.pose_command.get_pose()
+        current_pose= self.pose_cmd.get_pose()
         coords = self.trajectory_generator.generate_move_trajectory(speed, step_hight, robot_motion)
         coords = list(coords)
         coords[0]=(np.array(current_pose['fl_foot'])+coords[0])
@@ -46,13 +45,13 @@ class MotionController:
             coords[2] = (np.array(current_pose['rl_foot']) + coords[2])
             coords[3] = (np.array(current_pose['rr_foot']) + coords[3])
 
-            self.joint_control(coords, leg_resolution)
+            self.joint_control(coords, leg_resolution, 1)
         else :
             pass
 
-    def joint_control(self,coords,resolution):
+    def joint_control(self,coords,resolution,speed):
 
-        delay = 1 /resolution
+        delay = 1 /resolution/speed
         for i in range(resolution):
 
             fl_foot = (np.array(coords[0][i]) - np.array(hip_pose["fl_hip"]))
@@ -90,10 +89,9 @@ class MotionController:
                 "rl_foot": coords[2][i],
                 "rr_foot": coords[3][i],
             }
-            print(self.pose_command.get_pose())
             for foot, position in feet_positions.items():
-                self.pose_command.update_pose(foot, position)
-            # print(self.pose_command.get_pose())
+                self.pose_cmd.update_pose(foot, position)
+            print(pose_cmd.get_pose())
 
 if __name__ == "__main__":
     controller = MotionController()
