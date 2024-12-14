@@ -36,7 +36,7 @@ class MotionController:
 
         step_count, last_step_length = divmod(distance, speed)
         for i in range(step_count):
-            self.joint_control(coords, leg_resolution)
+            self.joint_control(coords, leg_resolution,1)
         if last_step_length != 0:
             coords = self.trajectory_generator.generate_move_trajectory(last_step_length, step_hight, robot_motion)
             coords = list(coords)

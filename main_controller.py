@@ -15,20 +15,14 @@ from controller.motion_controller import MotionController
 
 stabillizer_controller = StabilizerController()
 motion_controller = MotionController()
-taget_orientation = [0,10,0]
+taget_orientation = [0,0,0]
 
 def main():
-    print(pose_cmd.get_pose())
-   
+
     target_foot_coord= stabillizer_controller.stabilize(taget_orientation)
-
     motion_controller.pose_control(target_foot_coord)
-    # print("자세변경 완료")
-    # time.sleep(2)
-    # motion_controller.move_contorl(30,20,50,"forward")
+    motion_controller.move_contorl(30,20,50,"forward")
     # print("마지막 포즈")
-
-    print(pose_cmd.get_pose())
 
 if __name__ == "__main__":
 
