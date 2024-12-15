@@ -44,7 +44,7 @@ if __name__ == "__main__":
     imu_data = [0, 0, [0, 0, 0]]  # Example IMU data
 
     # Create StabilizerControl instance
-    stabilizer = StabilizerController()
+    stabilizer = StabilizerSolver()
 
     # Define the target orientation
     target_orientation = [0, -10, 0]
