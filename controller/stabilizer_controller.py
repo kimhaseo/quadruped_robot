@@ -18,18 +18,21 @@ class StabilizerController:
 
         self.kinematics = Kinematics()
         self.imu_data = imu_data
+        print(self.imu_data)
 
     def stabilize(self, target_orientation):
 
-        imu_acceleration = self.imu_data[0]
-        imu_angular_vel = self.imu_data[1]
-        imu_orientation = self.imu_data[2]
+        imu_acceleration = self.imu_data[2][0]
+        imu_angular_vel = self.imu_data[2][1]
+        imu_orientation = self.imu_data[2][2]
+
 
         # Calculate orientation gain
         orientation_gain = list(np.array(target_orientation) - np.array(imu_orientation))
         calibrated_orientation = list(np.array(target_orientation) + np.array(orientation_gain))
 
         # Calculate the target pose using the kinematics module
+        print(calibrated_orientation)
         target_pose = self.kinematics.calculate_foot_position_with_orientation(*calibrated_orientation)
 
         return target_pose
@@ -41,7 +44,7 @@ if __name__ == "__main__":
     imu_data = [0, 0, [0, 0, 0]]  # Example IMU data
 
     # Create StabilizerControl instance
-    stabilizer = StabilizerController(kinematics, imu_data)
+    stabilizer = StabilizerController()
 
     # Define the target orientation
     target_orientation = [0, -10, 0]
