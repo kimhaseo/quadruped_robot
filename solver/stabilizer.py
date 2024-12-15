@@ -13,7 +13,7 @@ imu_data = [0,0,[0,0,0]]
 # from sensor.imu import AHRSProcessor
 
 
-class StabilizerController:
+class StabilizerSolver:
     def __init__(self):
 
         self.kinematics = Kinematics()
