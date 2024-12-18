@@ -25,12 +25,11 @@ class MotionController:
         self.joint_control(coords,leg_resolution,2)
 
     def move_contorl(self, speed, step_hight, distance, robot_motion):
-
+        current_pose = self.pose_cmd.get_pose()
+        coords = self.trajectory_generator.generate_move_trajectory(speed, step_hight, robot_motion)
+        coords = list(coords)
         step_count, last_step_length = divmod(distance, speed)
         for i in range(step_count):
-            current_pose = self.pose_cmd.get_pose()
-            coords = self.trajectory_generator.generate_move_trajectory(speed, step_hight, robot_motion)
-            coords = list(coords)
             coords[0] = (np.array(current_pose['fl_foot']) + coords[0])
             coords[1] = (np.array(current_pose['fr_foot']) + coords[1])
             coords[2] = (np.array(current_pose['rl_foot']) + coords[2])
