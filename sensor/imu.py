@@ -66,7 +66,7 @@ class AHRSProcessor:
 
 # 메인 코드
 if __name__ == "__main__":
-    processor = AHRSProcessor('/dev/ttyUSB0', 115200)
+    processor = AHRSProcessor('COM5', 115200)
     thread = threading.Thread(target=processor.read_data)
 
     try:
