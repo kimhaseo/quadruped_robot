@@ -57,12 +57,12 @@ class MW_AHRS:
     def parse_angles(self,response):
 
         # Use regular expression to extract all floating-point numbers
-        angles = re.findall(r"-?\d+\.\d+", response)
+        # angles = re.findall(r"-?\d+\.\d+", response)
+        angles=[0,0,0]
         # Convert extracted strings to floats and return as a list
         return [float(angle) for angle in angles]
 
     def pose_update(self):
-
 
         self.connect()
         self.send_command("zro")
