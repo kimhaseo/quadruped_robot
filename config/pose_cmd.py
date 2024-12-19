@@ -27,12 +27,15 @@ class PoseCommand:
 
     def get_pose(self):
         """현재 포즈 가져오기"""
-        return {
+        data=  {
             "fl_foot": self.fl_foot,
             "fr_foot": self.fr_foot,
             "rl_foot": self.rl_foot,
             "rr_foot": self.rr_foot
         }
+
+        rounded_data = {key: [round(coord, 1) for coord in coords] for key, coords in data.items()}
+        return rounded_data
 
 class PoseManager:
     def __init__(self):
