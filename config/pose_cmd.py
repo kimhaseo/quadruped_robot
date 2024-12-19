@@ -11,6 +11,7 @@ class PoseCommand:
     fr_foot: list = field(default_factory=lambda: [start_pose["fr_foot"][0], start_pose["fr_foot"][1], start_pose["fr_foot"][2]])  # 앞 오른쪽 다리
     rl_foot: list = field(default_factory=lambda: [start_pose["rl_foot"][0], start_pose["rl_foot"][1], start_pose["rl_foot"][2]])  # 뒤 왼쪽 다리
     rr_foot: list = field(default_factory=lambda: [start_pose["rr_foot"][0], start_pose["rr_foot"][1], start_pose["rr_foot"][2]])  # 뒤 오른쪽 다리
+    body_orientation: list = field(default_factory=lambda: [0.0, 0.0, 0.0])  # Roll, Pitch, Yaw
 
     def update_pose(self, leg_name: str, coords: list):
         """지정된 다리의 좌표를 업데이트"""
@@ -25,13 +26,21 @@ class PoseCommand:
         else:
             print(f"Invalid leg name: {leg_name}")
 
+    def update_orientation(self, orientation: list):
+        """로봇의 몸체 자세(Orientation)를 업데이트"""
+        if len(orientation) == 3:
+            self.body_orientation = orientation
+        else:
+            print("Orientation must be a list of 3 values [Roll, Pitch, Yaw].")
+
     def get_pose(self):
         """현재 포즈 가져오기"""
         data=  {
             "fl_foot": self.fl_foot,
             "fr_foot": self.fr_foot,
             "rl_foot": self.rl_foot,
-            "rr_foot": self.rr_foot
+            "rr_foot": self.rr_foot,
+            "body_orientation": self.body_orientation
         }
 
         rounded_data = {key: [round(coord, 1) for coord in coords] for key, coords in data.items()}

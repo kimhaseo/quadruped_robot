@@ -5,6 +5,7 @@ from solver.stabilizer import StabilizerSolver
 from controller.motion_controller import MotionController
 from config.config import init_pose
 
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 stabilizer_controller = StabilizerSolver()

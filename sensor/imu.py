@@ -1,82 +1,103 @@
-import threading
-import math
 import serial
 import time
+import re
+from fontTools.misc.arrayTools import offsetRect
+from manager.pose_manager import pose_cmd
 
-# AHRS 센서 데이터를 처리하는 클래스
-class AHRSProcessor:
-    def __init__(self, port, baudrate):
-        self.serial_port = serial.Serial(port, baudrate, timeout=1)
-        self.run = True
-        self.acc = {'x': 0.0, 'y': 0.0, 'z': 0.0}
-        self.gyo = {'x': 0.0, 'y': 0.0, 'z': 0.0}
-        self.orientation = {'w': 1.0, 'x': 0.0, 'y': 0.0, 'z': 0.0}
 
-    def parse_data(self, data):
-        msg_type = data[1]
-        if msg_type == 0x01:  # ACC
-            acc_x = int.from_bytes(data[2:4], 'little', signed=True)
-            acc_y = int.from_bytes(data[4:6], 'little', signed=True)
-            acc_z = int.from_bytes(data[6:8], 'little', signed=True)
 
-            self.acc['x'] = acc_x / 1000.0 * 9.8
-            self.acc['y'] = acc_y / 1000.0 * 9.8
-            self.acc['z'] = acc_z / 1000.0 * 9.8
+class MW_AHRS:
+    def __init__(self):
+        self.port = "/dev/tty.usbserial-B000CVDX"
+        self.baudrate =  baudrate=115200
+        self.timeout = 1
+        self.connection = None
 
-        elif msg_type == 0x02:  # GYO
-            gyo_x = int.from_bytes(data[2:4], 'little', signed=True)
-            gyo_y = int.from_bytes(data[4:6], 'little', signed=True)
-            gyo_z = int.from_bytes(data[6:8], 'little', signed=True)
+    def connect(self):
+        """Establishes a connection to the serial port."""
+        try:
+            self.connection = serial.Serial(
+                port=self.port,
+                baudrate=self.baudrate,
+                timeout=self.timeout
+            )
+            print(f"Connected to {self.port}")
+        except serial.SerialException as e:
+            print(f"Failed to connect to {self.port}: {e}")
+            self.connection = None
 
-            self.gyo['x'] = gyo_x / 10.0 * 0.01745
-            self.gyo['y'] = gyo_y / 10.0 * 0.01745
-            self.gyo['z'] = gyo_z / 10.0 * 0.01745
+    def send_command(self, command):
+        """Sends a command to the sensor."""
+        if self.connection:
+            try:
+                # Append CR (0x0D) and LF (0x0A) to the command
+                full_command = command + '\r\n'
+                self.connection.write(full_command.encode())
+                # print(f"Sent: {command}")
+            except Exception as e:
+                print(f"Error sending command: {e}")
 
-        elif msg_type == 0x03:  # DEG
-            deg_x = int.from_bytes(data[2:4], 'little', signed=True)
-            deg_y = int.from_bytes(data[4:6], 'little', signed=True)
-            deg_z = int.from_bytes(data[6:8], 'little', signed=True)
+    def read_response(self):
+        """Reads the response from the sensor."""
+        if self.connection:
+            try:
+                response = self.connection.readline().decode().strip()
+                # print(f"Received: {response}")
+                return response
+            except Exception as e:
+                print(f"Error reading response: {e}")
+                return None
 
-            x = deg_x / 100.0
-            y = deg_y / 100.0
-            z = deg_z / 100.0
+    def disconnect(self):
+        """Closes the serial connection."""
+        if self.connection:
+            self.connection.close()
+            print(f"Disconnected from {self.port}")
 
-            cos_x = math.cos(x)
-            sin_x = math.sin(x)
-            cos_y = math.cos(y)
-            sin_y = math.sin(y)
-            cos_z = math.cos(z)
-            sin_z = math.sin(z)
+    def parse_angles(self,response):
 
-            self.orientation['w'] = (cos_z * cos_y * cos_x) + (sin_z * sin_y * sin_x)
-            self.orientation['x'] = (cos_z * cos_y * sin_x) - (sin_z * sin_y * cos_x)
-            self.orientation['y'] = (cos_z * sin_y * cos_x) + (sin_z * cos_y * sin_x)
-            self.orientation['z'] = (sin_z * cos_y * cos_x) - (cos_z * sin_y * sin_x)
+        # Use regular expression to extract all floating-point numbers
+        angles = re.findall(r"-?\d+\.\d+", response)
+        # Convert extracted strings to floats and return as a list
+        return [float(angle) for angle in angles]
 
-    def read_data(self):
-        while self.run:
-            if self.serial_port.in_waiting > 0:
-                data = self.serial_port.read(10)  # 데이터 길이를 적절히 설정
-                if len(data) == 10:
-                    self.parse_data(data)
+    def pose_update(self):
 
-    def stop(self):
-        self.run = False
-        self.serial_port.close()
 
-# 메인 코드
-if __name__ == "__main__":
-    processor = AHRSProcessor('/dev/ttyUSB0', 115200)
-    thread = threading.Thread(target=processor.read_data)
+        self.connect()
+        self.send_command("zro")
 
-    try:
-        thread.start()
         while True:
-            print("Acceleration:", processor.acc)
-            print("Angular Velocity:", processor.gyo)
-            print("Orientation:", processor.orientation)
-            time.sleep(0.1)
-    except KeyboardInterrupt:
-        print("Stopping...")
-        processor.stop()
-        thread.join()
+            # Request Euler angles
+            self.send_command("ang")
+            str_orientation = self.read_response()
+            orientation = self.parse_angles(str_orientation)
+            pose_cmd.update_orientation(orientation)
+            body = pose_cmd.get_pose()
+            # print(body["body_orientation"])
+            # print(body["body_orientation"])
+            time.sleep(0.1)  # Allow time for a response
+
+        # Disconnect after use
+
+
+# Example usage
+# if __name__ == "__main__":
+#     # Replace 'COM5' with the appropriate port
+#     sensor = MW_AHRS(port='/dev/tty.usbserial-B000CVDX')
+#     sensor.connect()
+#     sensor.send_command("zro")
+#
+#     while True:
+#     # Request Euler angles
+#         sensor.send_command("ang")
+#         str_orientation = sensor.read_response()
+#         orientation = parse_angles(str_orientation)
+#         pose_cmd.update_orientation(orientation)
+#         body = pose_cmd.get_pose()
+#         print(body["body_orientation"])
+#         # print(body["body_orientation"])
+#         time.sleep(0.1)  # Allow time for a response
+#
+#     # Disconnect after use
+#     sensor.disconnect()
