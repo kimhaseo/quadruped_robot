@@ -27,7 +27,7 @@ class Kinematics:
             [-self.body_length / 2, +self.body_width / 2 + self.L1, -self.body_height],  # 뒤 오른쪽
         ])
 
-    def calculate_foot_position_with_orientation(self, roll, pitch, yaw):
+    def calculate_foot_position_with_orientation(self, roll, pitch, yaw, coords):
         """
         Roll, Pitch, Yaw를 적용하여 발 위치를 계산.
 
@@ -66,14 +66,9 @@ class Kinematics:
 
         # 전체 회전 행렬
         R = R_z @ R_y @ R_x
-        current_pose = pose_cmd.get_pose()
-        # print(type(current_pose))
-        # print(current_pose.values())
-        current_pose_list = list(current_pose.values())
-        # print(self.foot_positions,"    ",current_pose_list)
 
         # 초기 발 위치에 회전 행렬 적용
-        rotated_positions = np.dot(current_pose_list, R.T)
+        rotated_positions = np.dot(coords, R.T)
         rotated_positions = {
             "fl_foot": [rotated_positions[0][0],rotated_positions[0][1], rotated_positions[0][2]],
             "fr_foot": [rotated_positions[1][0],rotated_positions[1][1], rotated_positions[1][2]],
@@ -145,11 +140,14 @@ class Kinematics:
 if __name__ == "__main__":
     # 테스트 입력 (roll, pitch, yaw 값은 도 단위)
     roll = 0  # x축 회전 (degrees)
-    pitch = 0  # y축 회전 (degrees)
+    pitch = 10  # y축 회전 (degrees)
     yaw = 0  # z축 회전 (degrees)
     #
     kinematics = Kinematics()
-    new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw))
+
+    coords = config.init_pose
+    coords_list = [coords["fl_foot"],coords["fr_foot"],coords["rl_foot"],coords["rr_foot"]]
+    new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw, coords_list))
     print(new_foot_positions)
     # angle = kinematics.calculate_joint_angle(False,*new_foot_positions[0])
     #

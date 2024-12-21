@@ -64,7 +64,7 @@ class MW_AHRS:
 
     def pose_update(self):
 
-        self.connect()
+        # self.connect()
         self.send_command("zro")
 
         while True:

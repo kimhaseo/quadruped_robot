@@ -1,6 +1,7 @@
 import sys
 import os
 from ctypes.wintypes import tagRECT
+from os import close
 
 import numpy as np
 import threading
@@ -30,19 +31,13 @@ class StabilizerSolver:
             current_orientation = body_pose["body_orientation"]
             diff_orientation = np.array(target_orientation) - (np.array(current_orientation))
 
-            if any(15 > abs(value) > 1 for value in diff_orientation):
-
-                calibartion_orientation = np.array(target_orientation) + np.array(diff_orientation)
-                coords = self.kinematics.calculate_foot_position_with_orientation(*calibartion_orientation)
-                print(coords)
-
-            elif any(abs(value) >= 15 for value in diff_orientation):
+            if any(abs(value) >= 30 for value in diff_orientation):
                 raise ValueError ("자세 이상")
 
             else:
                 pass
 
-            print(diff_orientation)
+            return diff_orientation
 
 if __name__ == "__main__":
 
