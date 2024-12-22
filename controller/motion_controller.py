@@ -115,10 +115,26 @@ class MotionController:
 if __name__ == "__main__":
     controller = MotionController()
     target_pose = config.config.init_pose
-    controller.pose_control(target_pose,[0,0,0])
-    time.sleep(5)
-    print("보행 시작")
-    controller.move_control(80,70,500,"forward", [0,0,0])
-    controller.pose_control(target_pose,[0,0,0])
+    controller.pose_control(target_pose,[0, 0, 0])
+    time.sleep(1)
+    target_pose = config.config.start_pose
+    controller.pose_control(target_pose, [0, 0, 0])
+    time.sleep(1)
+    target_pose = config.config.left_pose
+    controller.pose_control(target_pose,[0, 0, 0])
+    target_pose = config.config.start_pose
+    controller.pose_control(target_pose, [0, 0, 0])
+    target_pose = config.config.left_pose
+    controller.pose_control(target_pose,[0, 0, 0])
+    target_pose = config.config.start_pose
+    controller.pose_control(target_pose, [0, 0, 0])
+    target_pose = config.config.right_pose
+    controller.pose_control(target_pose,[0, 0, 0])
+    target_pose = config.config.start_pose
+    controller.pose_control(target_pose, [0, 0, 0])
+
+    # print("보행 시작")
+    # controller.move_control(80,70,500,"forward", [0,0,0])
+    # controller.pose_control(target_pose,[0,0,0])
 
 
