@@ -80,12 +80,12 @@ class Kinematics:
 
     def calculate_joint_angle(self, right_leg, x, y, z):
 
-        x_min, x_max = -150, 150
+        x_min, x_max = -100, 100
         if right_leg:
-            y_min, y_max = 10,130
+            y_min, y_max = 10,140
         else :
-            y_min, y_max = -130,-10
-        z_min, z_max = -350, -50
+            y_min, y_max = -140,-10
+        z_min, z_max = -350, -60
 
         if not (x_min <= x <= x_max):
             raise ValueError(f"x 값이 범위를 벗어났습니다: {x} (허용 범위: {x_min} ~ {x_max})")

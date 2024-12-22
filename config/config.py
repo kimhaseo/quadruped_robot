@@ -11,7 +11,7 @@ body_dimensions = {
     "height": 250   # mm
 }
 
-leg_resolution = 200
+leg_resolution = 400
 
 hip_pose = {
     "fl_hip": [body_dimensions["length"]/2, -body_dimensions["width"]/2, 0],
@@ -28,8 +28,8 @@ init_pose = {
 }
 
 start_pose = {
-    "fl_foot": [hip_pose["fl_hip"][0], -leg_length["L1"] + hip_pose["fl_hip"][1], -70],
-    "fr_foot": [hip_pose["fr_hip"][0], leg_length["L1"] + hip_pose["fr_hip"][1], -70],
-    "rl_foot": [hip_pose["rl_hip"][0], -leg_length["L1"] + hip_pose["rl_hip"][1], -70],
-    "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -70],
+    "fl_foot": [hip_pose["fl_hip"][0], -leg_length["L1"] + hip_pose["fl_hip"][1], -250],
+    "fr_foot": [hip_pose["fr_hip"][0], leg_length["L1"] + hip_pose["fr_hip"][1], -250],
+    "rl_foot": [hip_pose["rl_hip"][0], -leg_length["L1"] + hip_pose["rl_hip"][1], -250],
+    "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -250],
 }
