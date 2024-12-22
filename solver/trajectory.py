@@ -157,7 +157,7 @@ class TrajectoryGenerator:
         return np.stack((x, y, z), axis=1)
 
     def generate_move_trajectory(self, speed, step_hight, robot_motion):
-        print("궤적 생성")
+
         self.speed = speed
         self.step_hight = step_hight
         self.robot_motion = robot_motion
