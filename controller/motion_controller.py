@@ -66,11 +66,6 @@ class MotionController:
         delay = 1 /resolution/speed
         for i in range(resolution):
 
-            # fl_foot = (np.array(coords[0][i]) - np.array(hip_pose["fl_hip"]))
-            # fr_foot = (np.array(coords[1][i]) - np.array(hip_pose["fr_hip"]))
-            # rl_foot = (np.array(coords[2][i]) - np.array(hip_pose["rl_hip"]))
-            # rr_foot = (np.array(coords[3][i]) - np.array(hip_pose["rr_hip"]))
-
             foot_coords = [coords[0][i],coords[1][i],coords[2][i],coords[3][i]]
             calibration_foot_coords = self.inverse_kinematics.calculate_foot_position_with_orientation(*diff_orientation,foot_coords)
 
@@ -115,23 +110,26 @@ class MotionController:
 if __name__ == "__main__":
     controller = MotionController()
     for i in range(10):
+        target_pose = config.config.down_pose
+        controller.pose_control(target_pose, [0, 0, 0])
+        time.sleep(1)
         target_pose = config.config.init_pose
         controller.pose_control(target_pose,[0, 0, 0])
         time.sleep(1)
         target_pose = config.config.down_pose
         controller.pose_control(target_pose, [0, 0, 0])
-        time.sleep(1)
-        target_pose = config.config.left_pose
-        controller.pose_control(target_pose,[0, 0, 0])
-        time.sleep(1)
-        target_pose = config.config.init_pose
-        controller.pose_control(target_pose,[0, 0, 0])
-        time.sleep(1)
-        target_pose = config.config.right_pose
-        controller.pose_control(target_pose,[0, 0, 0])
-        time.sleep(1)
-        target_pose = config.config.init_pose
-        controller.pose_control(target_pose,[0, 0, 0])
+        # time.sleep(1)
+        # target_pose = config.config.left_pose
+        # controller.pose_control(target_pose,[0, 0, 0])
+        # time.sleep(1)
+        # target_pose = config.config.init_pose
+        # controller.pose_control(target_pose,[0, 0, 0])
+        # time.sleep(1)
+        # target_pose = config.config.right_pose
+        # controller.pose_control(target_pose,[0, 0, 0])
+        # time.sleep(1)
+        # target_pose = config.config.init_pose
+        # controller.pose_control(target_pose,[0, 0, 0])
 
     # print("보행 시작")
     # controller.move_control(40,70,400,"forward", [0,0,0])
