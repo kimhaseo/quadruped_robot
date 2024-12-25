@@ -12,9 +12,9 @@ class MotorCommand:
         "rl_joint1": 0x147,
         "rl_joint2": 0x148,
         "rl_joint3": 0x149,
-        "rr_joint1": 0x150,
-        "rr_joint2": 0x151,
-        "rr_joint3": 0x152
+        "rr_joint1": 0x14A,
+        "rr_joint2": 0x14B,
+        "rr_joint3": 0x14C
     }
 
     def __init__(self, motor_name: str, value: int):

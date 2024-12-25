@@ -20,7 +20,7 @@ import numpy as np
 class MotionController:
     def __init__(self):
         self.inverse_kinematics = Kinematics()
-        # self.motor_controller = MotorController()
+        self.motor_controller = MotorController()
         self.trajectory_generator = TrajectoryGenerator()
         self.pose_cmd = pose_cmd
         self.stabilizer = StabilizerSolver()
@@ -29,7 +29,7 @@ class MotionController:
 
         current_pose = self.pose_cmd.get_pose()
         coords = self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
-        self.joint_control(coords,leg_resolution,4, target_orientation)
+        self.joint_control(coords,leg_resolution,0.5, target_orientation)
 
     def move_control(self, speed, step_hight, distance, robot_motion,target_orientation):
         current_pose = self.pose_cmd.get_pose()
@@ -44,7 +44,7 @@ class MotionController:
             foot_coords[2] = (np.array(current_pose['rl_foot']) + coords[2])
             foot_coords[3] = (np.array(current_pose['rr_foot']) + coords[3])
 
-            self.joint_control(foot_coords, leg_resolution,1,target_orientation)
+            self.joint_control(foot_coords, leg_resolution,0.5,target_orientation)
 
         coords = self.trajectory_generator.generate_move_trajectory(last_step_length, step_hight, robot_motion)
         coords = list(coords)
@@ -93,13 +93,13 @@ class MotionController:
                 AngleCommand("fr_joint2", fr_degree2),
                 AngleCommand("fr_joint3", 2 * fr_degree3),
                 # AngleCommand("rl_joint1", -rl_degree1),
-                # AngleCommand("rl_joint2", -rl_degree2),
-                # AngleCommand("rl_joint3", -2 * rl_degree3),
+                AngleCommand("rl_joint2", -rl_degree2),
+                AngleCommand("rl_joint3", -2 * rl_degree3),
                 # AngleCommand("rr_joint1", rr_degree1),
-                # AngleCommand("rr_joint2", rr_degree2),
-                # AngleCommand("rr_joint3", 2 * rr_degree3),
+                AngleCommand("rr_joint2", rr_degree2),
+                AngleCommand("rr_joint3", 2 * rr_degree3),
             ]
-            # self.motor_controller.move_motors(angle_commands)
+            self.motor_controller.move_motors(angle_commands)
             time.sleep(delay)
 
             feet_positions = {
@@ -114,27 +114,27 @@ class MotionController:
 
 if __name__ == "__main__":
     controller = MotionController()
-    target_pose = config.config.init_pose
-    controller.pose_control(target_pose,[0, 0, 0])
-    time.sleep(1)
-    target_pose = config.config.start_pose
-    controller.pose_control(target_pose, [0, 0, 0])
-    time.sleep(1)
-    target_pose = config.config.left_pose
-    controller.pose_control(target_pose,[0, 0, 0])
-    target_pose = config.config.start_pose
-    controller.pose_control(target_pose, [0, 0, 0])
-    target_pose = config.config.left_pose
-    controller.pose_control(target_pose,[0, 0, 0])
-    target_pose = config.config.start_pose
-    controller.pose_control(target_pose, [0, 0, 0])
-    target_pose = config.config.right_pose
-    controller.pose_control(target_pose,[0, 0, 0])
-    target_pose = config.config.start_pose
-    controller.pose_control(target_pose, [0, 0, 0])
+    for i in range(10):
+        target_pose = config.config.init_pose
+        controller.pose_control(target_pose,[0, 0, 0])
+        time.sleep(1)
+        target_pose = config.config.down_pose
+        controller.pose_control(target_pose, [0, 0, 0])
+        time.sleep(1)
+        target_pose = config.config.left_pose
+        controller.pose_control(target_pose,[0, 0, 0])
+        time.sleep(1)
+        target_pose = config.config.init_pose
+        controller.pose_control(target_pose,[0, 0, 0])
+        time.sleep(1)
+        target_pose = config.config.right_pose
+        controller.pose_control(target_pose,[0, 0, 0])
+        time.sleep(1)
+        target_pose = config.config.init_pose
+        controller.pose_control(target_pose,[0, 0, 0])
 
     # print("보행 시작")
-    # controller.move_control(80,70,500,"forward", [0,0,0])
+    # controller.move_control(40,70,400,"forward", [0,0,0])
     # controller.pose_control(target_pose,[0,0,0])
 
 
