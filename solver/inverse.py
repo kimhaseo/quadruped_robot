@@ -1,6 +1,5 @@
 import sys
 import os
-from http.cookiejar import cut_port_re
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 

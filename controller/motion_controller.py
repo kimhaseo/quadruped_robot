@@ -25,11 +25,12 @@ class MotionController:
         self.pose_cmd = pose_cmd
         self.stabilizer = StabilizerSolver()
 
-    def pose_control(self, target_pose, target_orientation):
+    def pose_control(self, target_pose, target_orientation, speed):
 
         current_pose = self.pose_cmd.get_pose()
         coords = self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
-        self.joint_control(coords,leg_resolution,0.5, target_orientation)
+        motor_speed  = speed * 2000
+        self.joint_control(coords,leg_resolution, speed, target_orientation, motor_speed)
 
     def move_control(self, speed, step_hight, distance, robot_motion,target_orientation):
         current_pose = self.pose_cmd.get_pose()
@@ -60,7 +61,7 @@ class MotionController:
         else :
             pass
 
-    def joint_control(self,coords,resolution,speed,target_orientation):
+    def joint_control(self,coords,resolution,speed,target_orientation, motor_speed):
 
         diff_orientation = -(self.stabilizer.stabilize(target_orientation))
         delay = 1 /resolution/speed
@@ -81,18 +82,18 @@ class MotionController:
 
             #
             angle_commands = [
-                # AngleCommand("fl_joint1", -fl_degree1),
-                AngleCommand("fl_joint2", -fl_degree2),
-                AngleCommand("fl_joint3", -2 * fl_degree3),
-                # AngleCommand("fr_joint1", fr_degree1),
-                AngleCommand("fr_joint2", fr_degree2),
-                AngleCommand("fr_joint3", 2 * fr_degree3),
-                # AngleCommand("rl_joint1", -rl_degree1),
-                AngleCommand("rl_joint2", -rl_degree2),
-                AngleCommand("rl_joint3", -2 * rl_degree3),
-                # AngleCommand("rr_joint1", rr_degree1),
-                AngleCommand("rr_joint2", rr_degree2),
-                AngleCommand("rr_joint3", 2 * rr_degree3),
+                # AngleCommand("fl_joint1", -fl_degree1, motor_speed),
+                AngleCommand("fl_joint2", -fl_degree2, motor_speed),
+                AngleCommand("fl_joint3", -2 * fl_degree3, motor_speed),
+                # AngleCommand("fr_joint1", fr_degree1, motor_speed),
+                AngleCommand("fr_joint2", fr_degree2, motor_speed),
+                AngleCommand("fr_joint3", 2 * fr_degree3, motor_speed),
+                # AngleCommand("rl_joint1", -rl_degree1, motor_speed),
+                AngleCommand("rl_joint2", -rl_degree2, motor_speed),
+                AngleCommand("rl_joint3", -2 * rl_degree3, motor_speed),
+                # AngleCommand("rr_joint1", rr_degree1, motor_speed),
+                AngleCommand("rr_joint2", rr_degree2, motor_speed),
+                AngleCommand("rr_joint3", 2 * rr_degree3, motor_speed),
             ]
             self.motor_controller.move_motors(angle_commands)
             time.sleep(delay)
