@@ -84,7 +84,7 @@ class Kinematics:
             y_min, y_max = 10,140
         else :
             y_min, y_max = -140,-10
-        z_min, z_max = -350, -60
+        z_min, z_max = -370, -60
 
         if not (x_min <= x <= x_max):
             raise ValueError(f"x 값이 범위를 벗어났습니다: {x} (허용 범위: {x_min} ~ {x_max})")
@@ -144,8 +144,8 @@ if __name__ == "__main__":
     yaw = 0  # z축 회전 (degrees)
     #
     kinematics = Kinematics()
-    test = kinematics.calculate_joint_angle(False,0,-89,-100)
-    print(test)
+    # test = kinematics.calculate_joint_angle(False,0,-89,-370)
+    # print(test)
     # coords = config.init_pose
     # coords_list = [coords["fl_foot"],coords["fr_foot"],coords["rl_foot"],coords["rr_foot"]]
     # new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw, coords_list))
