@@ -42,7 +42,7 @@ class MotionController:
             foot_coords[2] = (np.array(current_pose['rl_foot']) + coords[2])
             foot_coords[3] = (np.array(current_pose['rr_foot']) + coords[3])
 
-            self.joint_control(foot_coords, leg_resolution,1,target_orientation)
+            self.joint_control(foot_coords, leg_resolution,1,target_orientation,1)
 
         coords = self.trajectory_generator.generate_move_trajectory(last_step_length, step_hight, robot_motion)
         coords = list(coords)
