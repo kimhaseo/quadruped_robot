@@ -57,6 +57,7 @@ class MotionController:
             self.joint_control(foot_coords, leg_resolution,1,target_orientation,1)
         else :
             pass
+        self.pose_control(config.config.init_pose,[0,0,0],1)
 
     def joint_control(self,coords,resolution,speed,target_orientation, motor_speed):
 
@@ -107,19 +108,19 @@ class MotionController:
 
 if __name__ == "__main__":
     controller = MotionController()
-    for i in range(1):
+    # for i in range(1):
 
-        target_pose = config.config.init_pose
-        controller.pose_control(target_pose, [0, 0, 0],0.1)
-        time.sleep(1)
-        target_pose = config.config.down_pose
-        controller.pose_control(target_pose, [0, 0, 0],1)
-        time.sleep(1)
-        target_pose = config.config.init_pose
-        controller.pose_control(target_pose, [0, 0, 0],1)
+        # target_pose = config.config.init_pose
+        # controller.pose_control(target_pose, [0, 0, 0],0.1)
+        # time.sleep(1)
+        # target_pose = config.config.down_pose
+        # controller.pose_control(target_pose, [0, 0, 0],1)
+        # time.sleep(1)
+        # target_pose = config.config.init_pose
+        # controller.pose_control(target_pose, [0, 0, 0],1)
 
     # print("보행 시작")
-    # controller.move_control(40,70,400,"forward", [0,0,0])
+    controller.move_control(40,70,90,"forward", [0,0,0])
     # controller.pose_control(target_pose,[0,0,0])
 
 
