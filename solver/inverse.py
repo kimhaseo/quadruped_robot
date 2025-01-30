@@ -144,8 +144,8 @@ if __name__ == "__main__":
     yaw = 0  # z축 회전 (degrees)
     #
     kinematics = Kinematics()
-    # test = kinematics.calculate_joint_angle(False,0,-89,-370)
-    # print(test)
+    test = kinematics.calculate_joint_angle(False,0,-89,-300)
+    print(test)
     # coords = config.init_pose
     # coords_list = [coords["fl_foot"],coords["fr_foot"],coords["rl_foot"],coords["rr_foot"]]
     # new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw, coords_list))
