@@ -132,3 +132,30 @@ class MotorController:
         except Exception as e:
             print(f"Error moving motor {accel_command.motor_name}: {e}")
             raise
+
+    def read_angle(self,can_id):
+        data = [
+            0x92,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00,
+            0x00
+        ]
+        self.can_handler.send_message(can_id, data)
+        respones = self.can_handler.receive_message()
+
+        motor_angle = (
+                (respones[1] << 0) |
+                (respones[2] << 8) |
+                (respones[3] << 16) |
+                (respones[4] << 24) |
+                (respones[5] << 32) |
+                (respones[6] << 40) |
+
+                (respones[7] << 48)
+        )
+        return motor_angle
+

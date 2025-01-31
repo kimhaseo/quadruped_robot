@@ -5,6 +5,7 @@ from solver.stabilizer import StabilizerSolver
 from controller.motion_controller import MotionController
 from config.config import init_pose
 
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 stabilizer_controller = StabilizerSolver()
@@ -19,7 +20,7 @@ def main():
     target_foot_coord = stabilizer_controller.stabilize(target_orientation)
     motion_controller.pose_control(target_foot_coord)
     time.sleep(5)
-    motion_controller.move_contorl(30,20,50,"forward")
+    motion_controller.move_control(30,20,50,"forward",[0,0,0])
     time.sleep(5)
 
     # while True:

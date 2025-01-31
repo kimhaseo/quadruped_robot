@@ -215,13 +215,13 @@ if __name__ == "__main__":
 
     tg=TrajectoryGenerator()
     ik=inverse.Kinematics()
-    # trajetory = tg.generate_move_trajectory(60,20,"forward")
-    # print(trajetory)
-    target_pose = config.init_pose
-    pc = pose_cmd.PoseCommand()
-    current_pose =pc.get_pose()
-    pose_trajectory = tg.generate_pose_trajectory(target_pose,current_pose)
-    print(pose_trajectory)
+    trajetory = tg.generate_move_trajectory(60,20,"forward")
+    print(trajetory[1])
+    # target_pose = config.init_pose
+    # pc = pose_cmd.PoseCommand()
+    # current_pose =pc.get_pose()
+    # pose_trajectory = tg.generate_pose_trajectory(target_pose,current_pose)
+    # print(pose_trajectory)
     # start = np.array([0.0, 0.0, 0.0])  # 초기 포즈 (x, y, z)
     # goal = np.array([0.5, 0.2, 0.3])  # 목표 포즈 (x, y, z)
     #
