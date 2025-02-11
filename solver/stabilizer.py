@@ -26,20 +26,19 @@ class StabilizerSolver:
 
     def stabilize(self,target_orientation):
 
-        while True:
-            body_pose = pose_cmd.get_pose()
-            current_orientation = body_pose["body_orientation"]
-            diff_orientation = np.array(target_orientation) - (np.array(current_orientation))
+        body_pose = pose_cmd.get_pose()
+        current_orientation = body_pose["body_orientation"]
+        diff_orientation = np.array(target_orientation) - (np.array(current_orientation))
+        if any(abs(value) >= 30 for value in diff_orientation):
+            raise ValueError ("자세 이상")
 
-            if any(abs(value) >= 30 for value in diff_orientation):
-                raise ValueError ("자세 이상")
+        else:
+            pass
 
-            else:
-                pass
-
-            return diff_orientation
+        return diff_orientation
 
 if __name__ == "__main__":
 
     stabilizer = StabilizerSolver()
-    stabilizer.stabilize(target_orientation)
+    diff = stabilizer.stabilize(target_orientation)
+    print(diff)
