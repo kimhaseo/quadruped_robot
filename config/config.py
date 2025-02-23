@@ -11,7 +11,7 @@ body_dimensions = {
     "height": 270   # mm
 }
 
-leg_resolution = 300
+leg_resolution = 200
 
 hip_pose = {
     "fl_hip": [body_dimensions["length"]/2, -body_dimensions["width"]/2, 0],

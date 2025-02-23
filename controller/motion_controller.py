@@ -12,6 +12,7 @@ from manager.pose_manager import pose_cmd
 from solver.stabilizer import StabilizerSolver
 import time
 import numpy as np
+from solver.joint3_converter import CosineLawCalculator
 
 
 class MotionController:
@@ -21,6 +22,7 @@ class MotionController:
         self.trajectory_generator = TrajectoryGenerator()
         self.pose_cmd = pose_cmd
         self.stabilizer = StabilizerSolver()
+        self.joint_converter = CosineLawCalculator()
 
     def pose_control(self, target_pose, target_orientation, speed):
 
@@ -78,6 +80,12 @@ class MotionController:
             rl_degree1, rl_degree2, rl_degree3 = self.inverse_kinematics.calculate_joint_angle(False, *rl_foot)
             rr_degree1, rr_degree2, rr_degree3 = self.inverse_kinematics.calculate_joint_angle(True, *rr_foot)
 
+            fl_degree3 = self.joint_converter.calculate_angle(fl_degree3)
+            fr_degree3 = self.joint_converter.calculate_angle(fr_degree3)
+            rl_degree3 = self.joint_converter.calculate_angle(rl_degree3)
+            rr_degree3 = self.joint_converter.calculate_angle(rr_degree3)
+
+            print(fr_degree3,fl_degree3)
             #
             angle_commands = [
                 # AngleCommand("fl_joint1", -fl_degree1, motor_speed),
@@ -104,13 +112,13 @@ class MotionController:
             }
             for foot, position in feet_positions.items():
                 self.pose_cmd.update_pose(foot, position)
-            print(pose_cmd.get_pose())
+            # print(pose_cmd.get_pose())
 
 if __name__ == "__main__":
     controller = MotionController()
     # for i in range(1):
 
-    target_pose = config.config.init_pose
+    target_pose = config.config.down_pose
     controller.pose_control(target_pose, [0, 10, 0],2)
         # time.sleep(1)
         # target_pose = config.config.down_pose

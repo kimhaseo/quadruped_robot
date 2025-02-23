@@ -3,11 +3,11 @@ from idlelib.run import handle_tk_events
 
 
 class CosineLawCalculator:
-    def __init__(self, a: float, b: float, c: float, d: float):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
+    def __init__(self):
+        self.a = 200
+        self.b = 30
+        self.c = 190
+        self.d = 15
 
     def cosine_law(self, a: float, b: float, C: float) -> float:
         """코사인 법칙을 이용하여 세 번째 변의 길이를 계산하는 함수"""
@@ -32,7 +32,7 @@ class CosineLawCalculator:
         return angle
 
 # 사용 예시
-calculator = CosineLawCalculator(a=200, b=30, c=190, d=15)
-theta = 90
+calculator = CosineLawCalculator()
+theta = 120
 angle = calculator.calculate_angle(theta)
 print(angle)
