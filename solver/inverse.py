@@ -124,7 +124,6 @@ class Kinematics:
 
             b3 = np.degrees(np.arccos((self.L2 ** 2 + self.L3 ** 2 - B ** 2) / (2 * self.L2 * self.L3)))  # self.L2, self.L3로 수정
             theta3 = 180 - b3
-            theta3 = theta3 - 90
             theta3 = round(theta3, 2)
 
             # 범위 체크
@@ -144,7 +143,7 @@ if __name__ == "__main__":
     yaw = 0  # z축 회전 (degrees)
     #
     kinematics = Kinematics()
-    test = kinematics.calculate_joint_angle(False,0,-89,-300)
+    test = kinematics.calculate_joint_angle(False,0,-89,-280)
     print(test)
     # coords = config.init_pose
     # coords_list = [coords["fl_foot"],coords["fr_foot"],coords["rl_foot"],coords["rr_foot"]]

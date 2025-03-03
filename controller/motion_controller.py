@@ -1,6 +1,5 @@
 import sys
 import os
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import config.config
 from solver.trajectory import TrajectoryGenerator
@@ -23,15 +22,18 @@ class MotionController:
         self.pose_cmd = pose_cmd
         self.stabilizer = StabilizerSolver()
         self.joint_converter = CosineLawCalculator()
+        self.control_state = False
 
     def pose_control(self, target_pose, target_orientation, speed):
-
+        self.control_state = True
         current_pose = self.pose_cmd.get_pose()
         coords = self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
         motor_speed  = speed * 4000
         self.joint_control(coords,leg_resolution, speed, target_orientation, motor_speed)
+        self.control_state = False
 
     def move_control(self, speed, step_hight, distance, robot_motion,target_orientation):
+        self.control_state = True
         current_pose = self.pose_cmd.get_pose()
         coords = self.trajectory_generator.generate_move_trajectory(speed, step_hight, robot_motion)
         coords = list(coords)
@@ -48,6 +50,7 @@ class MotionController:
 
         coords = self.trajectory_generator.generate_move_trajectory(last_step_length, step_hight, robot_motion)
         coords = list(coords)
+        self.control_state = False
 
         if last_step_length != 0:
 
@@ -61,12 +64,21 @@ class MotionController:
             pass
         self.pose_control(config.config.init_pose,[0,0,0],1)
 
+    def stabilize(self,target_orientation):
+        if self.control_state == False:
+            while True:
+                diff_orientation = -(self.stabilizer.stabilize(target_orientation))
+                current_pose = self.pose_cmd.get_pose()
+                foot_coords= [current_pose["fl_foot"],current_pose["fr_foot"],current_pose["rl_foot"],current_pose["rr_foot"]]
+                calibration_foot_coords = self.inverse_kinematics.calculate_foot_position_with_orientation(*diff_orientation,foot_coords)
+                self.pose_control(calibration_foot_coords,target_orientation,1)
+
     def joint_control(self,coords,resolution,speed,target_orientation, motor_speed):
 
-        diff_orientation = -(self.stabilizer.stabilize(target_orientation))
         delay = 1 /resolution/speed
         for i in range(resolution):
 
+            diff_orientation = -(self.stabilizer.stabilize(target_orientation))
             foot_coords = [coords[0][i],coords[1][i],coords[2][i],coords[3][i]]
             calibration_foot_coords = self.inverse_kinematics.calculate_foot_position_with_orientation(*diff_orientation,foot_coords)
 
@@ -84,8 +96,6 @@ class MotionController:
             fr_degree3 = self.joint_converter.calculate_angle(fr_degree3)
             rl_degree3 = self.joint_converter.calculate_angle(rl_degree3)
             rr_degree3 = self.joint_converter.calculate_angle(rr_degree3)
-
-            print(fr_degree3,fl_degree3)
             #
             angle_commands = [
                 # AngleCommand("fl_joint1", -fl_degree1, motor_speed),
@@ -112,14 +122,14 @@ class MotionController:
             }
             for foot, position in feet_positions.items():
                 self.pose_cmd.update_pose(foot, position)
-            # print(pose_cmd.get_pose())
+            print(pose_cmd.get_pose())
 
 if __name__ == "__main__":
     controller = MotionController()
     # for i in range(1):
-
-    target_pose = config.config.down_pose
-    controller.pose_control(target_pose, [0, 10, 0],2)
+    controller.stabilize([0, 1, 0])
+    # target_pose = config.config.down_pose
+    # controller.pose_control(target_pose, [0, 10, 0],2)
         # time.sleep(1)
         # target_pose = config.config.down_pose
         # controller.pose_control(target_pose, [0, 0, 0],1)
