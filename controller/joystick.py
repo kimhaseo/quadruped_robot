@@ -1,10 +1,8 @@
 from pynput import keyboard
-from manager.joystick_manger import control_cmd  # 올바른 경로 확인
-
+from manager.joystick_manger import control_cmd
 
 class Joystick:
     def __init__(self):
-        self.command = control_cmd
         self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
 
     def on_press(self, key):
@@ -28,7 +26,7 @@ class Joystick:
                 orientation_delta[0] = -1.0
 
             # wwadwasawdwadsawd 함수 호출
-            self.command.update_(linear_delta=linear_delta, angular_delta=angular_delta, orientation_delta=orientation_delta)
+            control_cmd.update_(linear_delta=linear_delta, angular_delta=angular_delta, orientation_delta=orientation_delta)
         except AttributeError:
             pass  # 특수키 (Shift, Ctrl 등) 무시
 

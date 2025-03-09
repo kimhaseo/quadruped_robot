@@ -31,7 +31,6 @@ class StabilizerSolver:
         diff_orientation = np.array(target_orientation) - (np.array(current_orientation))
         if any(abs(value) >= 30 for value in diff_orientation):
             raise ValueError ("자세 이상")
-
         else:
             pass
 
