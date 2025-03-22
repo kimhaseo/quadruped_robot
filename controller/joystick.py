@@ -13,17 +13,17 @@ class Joystick:
             orientation_delta = [0.0, 0.0, 0.0]
 
             if key.char == "w":
-                linear_delta = 0.1
+                linear_delta = 50
             elif key.char == "s":
-                linear_delta = -0.1
+                linear_delta = -50
             elif key.char == "a":
-                angular_delta = 0.1
+                angular_delta = 20
             elif key.char == "d":
-                angular_delta = -0.1
+                angular_delta = -20
             elif key.char == "q":
-                orientation_delta[0] = 1.0
+                orientation_delta[0] = 3.14/4
             elif key.char == "e":
-                orientation_delta[0] = -1.0
+                orientation_delta[0] = -3.14/4
 
             # wwadwasawdwadsawd 함수 호출
             control_cmd.update_(linear_delta=linear_delta, angular_delta=angular_delta, orientation_delta=orientation_delta)

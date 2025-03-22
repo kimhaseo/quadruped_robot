@@ -32,37 +32,19 @@ class MotionController:
         self.joint_control(coords,leg_resolution, speed, target_orientation, motor_speed)
         self.control_state = False
 
-    def move_control(self, speed, step_hight, distance, robot_motion,target_orientation):
+    def move_control(self, speed, step_hight, robot_motion,target_orientation):
         self.control_state = True
         current_pose = self.pose_cmd.get_pose()
         coords = self.trajectory_generator.generate_move_trajectory(speed, step_hight, robot_motion)
         coords = list(coords)
-        step_count, last_step_length = divmod(distance, speed)
 
         foot_coords = [0,0,0,0]
-        for i in range(step_count):
-            foot_coords[0] = (np.array(current_pose['fl_foot']) + coords[0])
-            foot_coords[1] = (np.array(current_pose['fr_foot']) + coords[1])
-            foot_coords[2] = (np.array(current_pose['rl_foot']) + coords[2])
-            foot_coords[3] = (np.array(current_pose['rr_foot']) + coords[3])
+        foot_coords[0] = (np.array(current_pose['fl_foot']) + coords[0])
+        foot_coords[1] = (np.array(current_pose['fr_foot']) + coords[1])
+        foot_coords[2] = (np.array(current_pose['rl_foot']) + coords[2])
+        foot_coords[3] = (np.array(current_pose['rr_foot']) + coords[3])
 
-            self.joint_control(foot_coords, leg_resolution,1,target_orientation,1)
-
-        coords = self.trajectory_generator.generate_move_trajectory(last_step_length, step_hight, robot_motion)
-        coords = list(coords)
-        self.control_state = False
-
-        if last_step_length != 0:
-
-            foot_coords[0] = (np.array(current_pose['fl_foot']) + coords[0])
-            foot_coords[1] = (np.array(current_pose['fr_foot']) + coords[1])
-            foot_coords[2] = (np.array(current_pose['rl_foot']) + coords[2])
-            foot_coords[3] = (np.array(current_pose['rr_foot']) + coords[3])
-
-            self.joint_control(foot_coords, leg_resolution,1,target_orientation,1)
-        else :
-            pass
-        self.pose_control(config.config.init_pose,[0,0,0],1)
+        self.joint_control(foot_coords, leg_resolution,1,target_orientation,1)
 
     def stabilize(self,target_orientation):
         if self.control_state == False:
@@ -76,6 +58,7 @@ class MotionController:
     def joint_control(self,coords,resolution,speed,target_orientation, motor_speed):
 
         delay = 1 /resolution/speed
+        print(delay)
         for i in range(resolution):
 
             diff_orientation = -(self.stabilizer.stabilize(target_orientation))
@@ -127,7 +110,7 @@ class MotionController:
 if __name__ == "__main__":
     controller = MotionController()
     # for i in range(1):
-    controller.stabilize([0, 1, 0])
+    # controller.stabilize([0, 1, 0])
     # target_pose = config.config.down_pose
     # controller.pose_control(target_pose, [0, 10, 0],2)
         # time.sleep(1)
@@ -138,7 +121,7 @@ if __name__ == "__main__":
         # controller.pose_control(target_pose, [0, 0, 0],1)
 
     # print("보행 시작")
-    # controller.move_control(40,70,90,"forward", [0,0,0])
+    controller.move_control(40,70,"forward", [0,0,0])
     # controller.pose_control(target_pose,[0,0,0])
 
 
