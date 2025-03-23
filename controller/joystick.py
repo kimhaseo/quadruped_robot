@@ -21,12 +21,17 @@ class Joystick:
             elif key.char == "d":
                 angular_delta = -20
             elif key.char == "q":
-                orientation_delta[0] = 3.14/4
+                orientation_delta[0] = 3.14/360
             elif key.char == "e":
-                orientation_delta[0] = -3.14/4
+                orientation_delta[0] = -3.14/360
+            elif key.char == "k":
+                linear_delta = 0
+                angular_delta = 0
 
-            # wwadwasawdwadsawd 함수 호출
+            #  함수 호출
             control_cmd.update_(linear_delta=linear_delta, angular_delta=angular_delta, orientation_delta=orientation_delta)
+            print(control_cmd.get_control_cmd())
+
         except AttributeError:
             pass  # 특수키 (Shift, Ctrl 등) 무시
 

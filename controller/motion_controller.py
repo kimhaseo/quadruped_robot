@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import config.config
 from solver.trajectory import TrajectoryGenerator
 from solver.inverse import Kinematics
-from config.config import leg_resolution,hip_pose
+from config.config import leg_resolution, hip_pose, init_pose
 from config.motor_cmd import AngleCommand
 from controller.motor_controller import MotorController
 from manager.pose_manager import pose_cmd
@@ -34,7 +34,8 @@ class MotionController:
 
     def move_control(self, speed, step_hight, robot_motion,target_orientation):
         self.control_state = True
-        current_pose = self.pose_cmd.get_pose()
+        # current_pose = self.pose_cmd.get_pose()
+        current_pose = init_pose
         coords = self.trajectory_generator.generate_move_trajectory(speed, step_hight, robot_motion)
         coords = list(coords)
 
@@ -58,7 +59,6 @@ class MotionController:
     def joint_control(self,coords,resolution,speed,target_orientation, motor_speed):
 
         delay = 1 /resolution/speed
-        print(delay)
         for i in range(resolution):
 
             diff_orientation = -(self.stabilizer.stabilize(target_orientation))

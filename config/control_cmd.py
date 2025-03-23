@@ -21,7 +21,7 @@ class ControlCommand:
                 self.orientation = [o + d for o, d in zip(self.orientation, orientation_delta)]
 
             # 값 제한 (예제)
-            self.linear_velocity = max(min(self.linear_velocity, 2.0), -2.0)
+            self.linear_velocity = max(min(self.linear_velocity, 50.0), -50.0)
             self.angular_velocity = max(min(self.angular_velocity, 1.0), -1.0)
 
             # print(f"Updated Command: {self}")

@@ -19,7 +19,8 @@ class MainLoop:
             time.sleep(0.1)
             if current_vel[0] != control_pose["linear_velocity"]:
                 self.motion_controller.move_control(40, 70, "forward", [0, 0, 0])
-                print(current_vel[0],"-",control_pose["linear_velocity"])
+                pass
+
 
 if __name__ == "__main__":
     main_loop = MainLoop()

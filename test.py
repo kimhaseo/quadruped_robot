@@ -1,79 +1,35 @@
-import serial
-import time
-import re
+import numpy as np
+import matplotlib.pyplot as plt
 
-from fontTools.misc.arrayTools import offsetRect
+# 시간 설정
+T = 2  # 한 사이클 주기 (초)
+dt = 0.01  # 시간 간격
+t = np.arange(0, T, dt)  # 시간 벡터
 
+# 보행 주파수와 진폭 설정
+stride_length = 50  # 한 사이클당 이동 거리 (mm)
+step_height = 20  # 들어올리는 높이 (mm)
 
-class MW_AHRS:
-    def __init__(self, port, baudrate=115200, timeout=1):
-        self.port = port
-        self.baudrate = baudrate
-        self.timeout = timeout
-        self.connection = None
+# X 방향 이동 (사인 함수 사용)
+x = stride_length * np.sin(2 * np.pi * t / T)
 
-    def connect(self):
-        """Establishes a connection to the serial port."""
-        try:
-            self.connection = serial.Serial(
-                port=self.port,
-                baudrate=self.baudrate,
-                timeout=self.timeout
-            )
-            print(f"Connected to {self.port}")
-        except serial.SerialException as e:
-            print(f"Failed to connect to {self.port}: {e}")
-            self.connection = None
+# Z 방향 이동 초기화 (모든 값 0)
+z = np.zeros_like(x)
 
-    def send_command(self, command):
-        """Sends a command to the sensor."""
-        if self.connection:
-            try:
-                # Append CR (0x0D) and LF (0x0A) to the command
-                full_command = command + '\r\n'
-                self.connection.write(full_command.encode())
-                print(f"Sent: {command}")
-            except Exception as e:
-                print(f"Error sending command: {e}")
+# x가 증가하는 구간 (최솟값 → 최댓값)에서 z를 상승 및 하강
+rising_phase = x >= np.roll(x, 1)  # 현재 x가 이전 값보다 크면 증가 구간
 
-    def read_response(self):
-        """Reads the response from the sensor."""
-        if self.connection:
-            try:
-                response = self.connection.readline().decode().strip()
-                # print(f"Received: {response}")
-                return response
-            except Exception as e:
-                print(f"Error reading response: {e}")
-                return None
+# 증가 구간에서 z를 부드럽게 올렸다가 내리기 (코사인 곡선 사용)
+t_rising = np.linspace(0, np.pi, np.sum(rising_phase))
+z[rising_phase] = step_height * (1 - np.cos(t_rising)) / 2
 
-    def disconnect(self):
-        """Closes the serial connection."""
-        if self.connection:
-            self.connection.close()
-            print(f"Disconnected from {self.port}")
+# 그래프 출력
+plt.figure(figsize=(8, 4))
+plt.plot(x, z, label="Foot Trajectory", color="b")
+plt.xlabel("X Position (mm)")
+plt.ylabel("Z Position (mm)")
+plt.title("Quadruped Foot Trajectory (Final Version)")
+plt.legend()
+plt.grid()
+plt.show()
 
-def parse_angles(response):
-
-    # Use regular expression to extract all floating-point numbers
-    angles = re.findall(r"-?\d+\.\d+", response)
-    # Convert extracted strings to floats and return as a list
-    return [float(angle) for angle in angles]
-
-# Example usage
-if __name__ == "__main__":
-    # Replace 'COM5' with the appropriate port
-    sensor = MW_AHRS(port='/dev/tty.usbserial-B000CVDX')
-    sensor.connect()
-    sensor.send_command("zro")
-
-    while True:
-    # Request Euler angles
-        sensor.send_command("ang")
-        str_orientation = sensor.read_response()
-        orientation = parse_angles(str_orientation)
-        print(orientation)
-        time.sleep(0.1)  # Allow time for a response
-
-    # Disconnect after use
-    sensor.disconnect()
