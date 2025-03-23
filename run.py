@@ -22,8 +22,9 @@ def run_velocity_estimator():
     try:
         while True:
             v_com, omega = estimator.get_velocity()
-            print("로봇의 선속도 (x, y, z):", v_com)
-            print("로봇의 각속도 (rad/s, x, y, z):", omega)
+            # print("로봇의 선속도 (x, y, z):", v_com)
+            # print("로봇의 각속도 (rad/s, x, y, z):", omega)로봇의 선속도 (x, y, z): [   7.675    0.    -270.   ]
+            # 로봇의 각속도 (rad/s, x, y, z): [ 1.57853545e-16 -2.83912739e+00  0.00000000e+00]
             time.sleep(0.1)  # 0.1초마다 속도 출력
     except KeyboardInterrupt:
         estimator.stop()

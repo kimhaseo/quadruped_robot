@@ -30,7 +30,7 @@ class Joystick:
 
             #  함수 호출
             control_cmd.update_(linear_delta=linear_delta, angular_delta=angular_delta, orientation_delta=orientation_delta)
-            print(control_cmd.get_control_cmd())
+            # print(control_cmd.get_control_cmd())
 
         except AttributeError:
             pass  # 특수키 (Shift, Ctrl 등) 무시

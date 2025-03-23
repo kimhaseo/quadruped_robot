@@ -105,7 +105,7 @@ class MotionController:
             }
             for foot, position in feet_positions.items():
                 self.pose_cmd.update_pose(foot, position)
-            # print(pose_cmd.get_pose())
+            print(pose_cmd.get_pose())
 
 if __name__ == "__main__":
     controller = MotionController()

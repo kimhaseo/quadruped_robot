@@ -18,7 +18,7 @@ class MainLoop:
             control_pose = control_cmd.get_control_cmd()
             current_vel = current_pose['body_vel']
             current_orientation = current_pose['body_orientation']
-            time.sleep(0.1)
+            time.sleep(0.01)
             if current_vel[0] != control_pose["linear_velocity"]:
                 target_speed = control_pose["linear_velocity"] - current_vel[0]
                 if target_speed > 0:
