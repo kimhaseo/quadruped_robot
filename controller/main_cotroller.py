@@ -1,4 +1,6 @@
 import time
+from ctypes.wintypes import tagRECT
+
 from manager.joystick_manger import control_cmd
 from manager.pose_manager import pose_cmd
 from controller.motion_controller import MotionController
@@ -18,8 +20,13 @@ class MainLoop:
             current_orientation = current_pose['body_orientation']
             time.sleep(0.1)
             if current_vel[0] != control_pose["linear_velocity"]:
-                self.motion_controller.move_control(40, 70, "forward", [0, 0, 0])
-                pass
+                target_speed = control_pose["linear_velocity"] - current_vel[0]
+                if target_speed > 0:
+                    motion = "forward"
+                elif target_speed < 0:
+                    motion = "backward"
+
+                self.motion_controller.move_control(target_speed, 70, motion, [0, 0, 0])
 
 
 if __name__ == "__main__":
