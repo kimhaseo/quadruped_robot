@@ -4,8 +4,6 @@ import re
 from fontTools.misc.arrayTools import offsetRect
 from manager.pose_manager import pose_cmd
 
-
-
 class MW_AHRS:
     def __init__(self):
         self.port = "/dev/tty.usbserial-B000CVDX"

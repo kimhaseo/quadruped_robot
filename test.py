@@ -1,5 +1,9 @@
 import serial
 import time
+import re
+
+from fontTools.misc.arrayTools import offsetRect
+
 
 class MW_AHRS:
     def __init__(self, port, baudrate=115200, timeout=1):
@@ -37,7 +41,7 @@ class MW_AHRS:
         if self.connection:
             try:
                 response = self.connection.readline().decode().strip()
-                print(f"Received: {response}")
+                # print(f"Received: {response}")
                 return response
             except Exception as e:
                 print(f"Error reading response: {e}")
@@ -49,23 +53,27 @@ class MW_AHRS:
             self.connection.close()
             print(f"Disconnected from {self.port}")
 
+def parse_angles(response):
+
+    # Use regular expression to extract all floating-point numbers
+    angles = re.findall(r"-?\d+\.\d+", response)
+    # Convert extracted strings to floats and return as a list
+    return [float(angle) for angle in angles]
+
 # Example usage
 if __name__ == "__main__":
     # Replace 'COM5' with the appropriate port
-
-    sensor = MW_AHRS(port='COM5')
+    sensor = MW_AHRS(port='/dev/tty.usbserial-B000CVDX')
     sensor.connect()
     sensor.send_command("zro")
-    while True:
-    # Request device ID
-    #     sensor.send_command("id")
-    #     time.sleep(0.1)  # Allow time for a response
-    #     sensor.read_response()
 
-        # Request Euler angles
+    while True:
+    # Request Euler angles
         sensor.send_command("ang")
-        time.sleep(0.01)  # Allow time for a response
-        sensor.read_response()
+        str_orientation = sensor.read_response()
+        orientation = parse_angles(str_orientation)
+        print(orientation)
+        time.sleep(0.1)  # Allow time for a response
 
     # Disconnect after use
     sensor.disconnect()

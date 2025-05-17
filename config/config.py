@@ -1,8 +1,10 @@
+joint3_offset = 56.64
+
 
 leg_length = {
     "L1": 89,
-    "L2": 170,
-    "L3": 200
+    "L2": 205,
+    "L3": 205
 }
 
 body_dimensions = {
@@ -11,7 +13,7 @@ body_dimensions = {
     "height": 270   # mm
 }
 
-leg_resolution = 300
+leg_resolution = 200
 
 hip_pose = {
     "fl_hip": [body_dimensions["length"]/2, -body_dimensions["width"]/2, 0],
@@ -54,3 +56,4 @@ right_pose = {
     "rl_foot": [hip_pose["rl_hip"][0], -leg_length["L1"] + hip_pose["rl_hip"][1], -150],
     "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -150],
 }
+
