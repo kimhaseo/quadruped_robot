@@ -1,8 +1,8 @@
 
 leg_length = {
     "L1": 89,
-    "L2": 170,
-    "L3": 200
+    "L2": 205,
+    "L3": 205
 }
 
 body_dimensions = {
@@ -55,3 +55,4 @@ right_pose = {
     "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -150],
 }
 
+joint3_offset = 56.64
