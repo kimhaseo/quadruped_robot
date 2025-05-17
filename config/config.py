@@ -1,3 +1,5 @@
+joint3_offset = 56.64
+
 
 leg_length = {
     "L1": 89,
@@ -55,4 +57,3 @@ right_pose = {
     "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -150],
 }
 
-joint3_offset = 56.64

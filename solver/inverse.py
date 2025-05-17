@@ -128,7 +128,6 @@ class Kinematics:
             theta2 = round(theta2, 2)
 
             b3 = np.degrees(np.arccos((self.L2 ** 2 + self.L3 ** 2 - B ** 2) / (2 * self.L2 * self.L3)))  # self.L2, self.L3로 수정
-            print(b3)
             theta3=self.cosine_clac.calculate_angle(b3)
             theta3 = theta3-config.joint3_offset
             theta3 = round(theta3, 2)
