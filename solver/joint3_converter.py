@@ -6,9 +6,11 @@ class CosineLawCalculator:
     def __init__(self):
 
         self.a = 170.245
-        self.b = 17
-        self.c = 175
-        self.d = 22.5
+        self.b = 17         #link3 뒤쪽 길이
+        self.c = 173      #푸쉬 로드
+        self.d = 22.847
+
+        #min 14도가 원점으로 올수있도록 사용
 
     def cosine_law(self, a: float , b: float, C: float) -> float:
         """코사인 법칙을 이용하여 세 번째 변의 길이를 계산하는 함수"""
@@ -26,15 +28,14 @@ class CosineLawCalculator:
     def calculate_angle(self, theta: float) -> float:
         """주어진 theta에 대한 angle을 계산하는 함수"""
         theta=165.7-theta
-        line = self.cosine_law(self.a, self.d, theta)
+        line = self.cosine_law(self.a, self.b, theta)
         theta_a = self.find_angle(line, self.d, self.c)
-        print(theta_a)
         theta_b = self.find_angle(line, self.a, self.b)
         angle = theta_a + theta_b
         return angle
 
 # 사용 예시
 calculator = CosineLawCalculator()
-theta = 90
+theta = 110
 angle = calculator.calculate_angle(theta)
 print(angle)
