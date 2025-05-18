@@ -1,15 +1,13 @@
 import sys
 import os
 
-from ultralytics.utils.callbacks.base import teardown
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import numpy as np
 import math
 from config import config
 from manager.pose_manager import pose_cmd
-from solver.joint3_converter import CosineLawCalculator, theta
+from solver.joint3_converter import CosineLawCalculator
 
 
 class Kinematics:
@@ -89,7 +87,7 @@ class Kinematics:
             y_min, y_max = 10,140
         else :
             y_min, y_max = -140,-10
-        z_min, z_max = -370, -50
+        z_min, z_max = -410, -50
 
         if not (x_min <= x <= x_max):
             raise ValueError(f"x 값이 범위를 벗어났습니다: {x} (허용 범위: {x_min} ~ {x_max})")
@@ -130,11 +128,13 @@ class Kinematics:
             b3 = np.degrees(np.arccos((self.L2 ** 2 + self.L3 ** 2 - B ** 2) / (2 * self.L2 * self.L3)))  # self.L2, self.L3로 수정
             theta3=self.cosine_clac.calculate_angle(b3)
             theta3 = theta3-config.joint3_offset
+            theta3 = theta3 * config.joint3_gear_ratio
             theta3 = round(theta3, 2)
 
             # 범위 체크
-            if abs(theta1) > 20 or abs(theta2) > 90 or abs(theta3) > 170:
+            if abs(theta1) > 20 or abs(theta2) > 90 or abs(theta3) > 120 * config.joint3_gear_ratio :
                 raise ValueError(f"Invalid joint angles: theta1={theta1}, theta2={theta2}, theta3={theta3}")
+
 
             return theta1, theta2, theta3
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     yaw = 0  # z축 회전 (degrees)
     #
     kinematics = Kinematics()
-    test = kinematics.calculate_joint_angle(False,0,-89,-150)
+    test = kinematics.calculate_joint_angle(False,0,-89,-200)
     print(test)
     # coords = config.init_pose
     # coords_list = [coords["fl_foot"],coords["fr_foot"],coords["rl_foot"],coords["rr_foot"]]

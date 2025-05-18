@@ -27,7 +27,7 @@ class CosineLawCalculator:
 
     def calculate_angle(self, theta: float) -> float:
         """주어진 theta에 대한 angle을 계산하는 함수"""
-        theta=165.7-theta
+        theta = 165.7-theta
         line = self.cosine_law(self.a, self.b, theta)
         theta_a = self.find_angle(line, self.d, self.c)
         theta_b = self.find_angle(line, self.a, self.b)
@@ -35,7 +35,7 @@ class CosineLawCalculator:
         return angle
 
 # 사용 예시
-calculator = CosineLawCalculator()
-theta = 110
-angle = calculator.calculate_angle(theta)
-print(angle)
+# calculator = CosineLawCalculator()
+# theta = 110
+# angle = calculator.calculate_angle(theta)
+# print(angle)

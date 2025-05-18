@@ -1,5 +1,9 @@
 import sys
 import os
+from tkinter.font import names
+from config.motor_cmd import AngleCommand
+import time
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from controller.can_handler import CanHandler
@@ -159,3 +163,11 @@ class MotorController:
         )
         return motor_angle
 
+
+if __name__ == "__main__":
+    mc = MotorController()
+    time.sleep(2)
+    test1 = AngleCommand("fl_joint2", -0, 100)
+    # test2 = AngleCommand("fl_joint3", -40, 100)
+    mc.move_motor_to_angle(test1)
+    # mc.move_motor_to_angle(test2)

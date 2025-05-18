@@ -1,8 +1,8 @@
 import can
 
 class CanHandler:
-    def __init__(self, channel="can0", bustype="socketcan"):
-        self.bus = can.interface.Bus(channel=channel, bustype=bustype)
+    def __init__(self, channel="COM5", interface="slcan", bitrate=1000000):
+        self.bus = can.interface.Bus(channel=channel, interface=interface, bitrate=bitrate)
 
     def __call__(self, msg):
         # 여기에서 수신된 메시지를 처리합니다.
@@ -13,7 +13,7 @@ class CanHandler:
         try:
             message = can.Message(arbitration_id=can_id, data=data, is_extended_id=False)
             self.bus.send(message)
-            print(f"Sent CAN message: ID={can_id}, data={data}")
+            # print(f"Sent CAN message: ID={can_id}, data={data}")
         except can.CanError as e:
             print(f"Error sending CAN message: {e}")
             raise
