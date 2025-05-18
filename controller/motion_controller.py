@@ -17,7 +17,7 @@ import numpy as np
 class MotionController:
     def __init__(self):
         self.inverse_kinematics = Kinematics()
-        self.motor_controller = MotorController()
+        # self.motor_controller = MotorController()
         self.trajectory_generator = TrajectoryGenerator()
         self.pose_cmd = pose_cmd
         self.stabilizer = StabilizerSolver()
@@ -37,6 +37,7 @@ class MotionController:
         motor_speed = speed * 4000
 
         foot_coords = [0,0,0,0]
+
         for i in range(step_count):
             foot_coords[0] = (np.array(current_pose['fl_foot']) + coords[0])
             foot_coords[1] = (np.array(current_pose['fr_foot']) + coords[1])
@@ -94,7 +95,7 @@ class MotionController:
                 AngleCommand("rr_joint2", rr_degree2, motor_speed),
                 AngleCommand("rr_joint3", rr_degree3, motor_speed),
             ]
-            self.motor_controller.move_motors(angle_commands)
+            # self.motor_controller.move_motors(angle_commands)
             time.sleep(delay)
 
             feet_positions = {
@@ -109,19 +110,27 @@ class MotionController:
 
 if __name__ == "__main__":
     controller = MotionController()
-    for i in range(10):
+    target_pose = config.config.start_pose
+    controller.pose_control(target_pose, [0, 0, 0], 0.1)
+    print("start-pose")
+    target_pose = config.config.init_pose
+    controller.pose_control(target_pose, [0, 0, 0],1)
 
-        target_pose = config.config.init_pose
-        controller.pose_control(target_pose, [0, 0, 0],1)
-        time.sleep(1)
-        target_pose = config.config.down_pose
-        controller.pose_control(target_pose, [0, 0, 0],1)
-        time.sleep(1)
-        target_pose = config.config.init_pose
-        controller.pose_control(target_pose, [0, 0, 0],1)
+    # for i in range(1):
+    #     target_pose = config.config.init_pose
+    #     controller.pose_control(target_pose, [0, 0, 0],1)
+    #     print("init-pose")
+    #     time.sleep(1)
+    #     target_pose = config.config.down_pose
+    #     controller.pose_control(target_pose, [0, 0, 0],1)
+    #     print("down-pose")
+    #     time.sleep(1)
+    #     target_pose = config.config.init_pose
+    #     controller.pose_control(target_pose, [0, 0, 0],1)
+    #     print("init-pose")
+    #     time.sleep(1)
 
-    # print("보행 시작")
-    # controller.move_control(40,40,400,"forward", [0,0,0])
-    # controller.pose_control(target_pose,[0,0,0])
+    print("보행 시작")
+    controller.move_control(40,40,40,"forward", [0,0,0])
 
 

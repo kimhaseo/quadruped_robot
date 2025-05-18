@@ -31,35 +31,31 @@ class TrajectoryGenerator:
         if start_step == 0 :
 
             if foot_direction == "forward":
-                # x 좌표 설정
                 x = np.where(
                     (0 <= time) & (time < 0.5),
-                    -self.step_length * (time / 0.5),  # 0에서 -step_length까지 감소
+                    self.step_length * (time / 0.5) / 2,  # 0 → step_length/2
                     np.where(
                         (0.5 <= time) & (time < 1.0),
-                        -self.step_length * (1 - (time - 0.5) / 0.5),  # -step_length에서 0으로 증가
+                        self.step_length * (0.5 + (time - 0.5) / 2),  # step_length/2 → step_length
                         np.where(
-                            (1.0 <= time) & (time < 1.5),
-                            self.step_length * ((time - 1.0) / 0.5),  # 0에서 step_length까지 증가
-                            self.step_length * (1 - (time - 1.5) / 0.5)  # step_length에서 0으로 감소
-                        )
-                    )
-                )
-                y = np.zeros_like(time)
-                z = np.where(
-                    (0 <= time) & (time < 0.5),
-                    0,  # z는 0으로 유지
-                    np.where(
-                        (0.5 <= time) & (time < 1.0),
-                        self.step_height * ((time - 0.5) / 0.5),  # 0에서 step_height까지 증가
-                        np.where(
-                            (1.0 <= time) & (time < 1.5),
-                            self.step_height * (1 - (time - 1.0) / 0.5),  # step_height에서 0까지 감소
-                            0  # z는 0으로 유지
+                            (1.0 <= time) & (time <= 2.0),
+                            self.step_length * (1 - (time - 1.0) / 1.0),  # step_length → 0
+                            0
                         )
                     )
                 )
 
+                y = np.zeros_like(time)
+
+                z = np.where(
+                    (0 <= time) & (time < 0.5),
+                    self.step_height * (time / 0.5),  # 0 → step_height
+                    np.where(
+                        (0.5 <= time) & (time < 1.0),
+                        self.step_height * (1 - (time - 0.5) / 0.5),  # step_height → 0
+                        0  # 나머지 시간: 접지 상태
+                    )
+                )
             if foot_direction == "backward":
                 # x 좌표 설정
                 x = np.where(
@@ -181,11 +177,10 @@ class TrajectoryGenerator:
         elif robot_motion == "right_turn":
             foot_direction = ["forward","backward","forward","backward"]
 
-
-        fl_coords  = self.move_foot_trajectory(time,1,foot_direction[0], self.speed , self.step_hight)
+        fl_coords  = self.move_foot_trajectory(time,0,foot_direction[0], self.speed , self.step_hight)
         fr_coords  = self.move_foot_trajectory(time,0,foot_direction[1], self.speed , self.step_hight)
         rl_coords = self.move_foot_trajectory(time,0,foot_direction[2], self.speed , self.step_hight)
-        rr_coords  = self.move_foot_trajectory(time,1,foot_direction[3], self.speed , self.step_hight)
+        rr_coords  = self.move_foot_trajectory(time,0,foot_direction[3], self.speed , self.step_hight)
 
         return (fl_coords, fr_coords, rl_coords, rr_coords)
 
@@ -194,7 +189,7 @@ class TrajectoryGenerator:
         goal_point = np.array(goal_point)
         start_point = np.array(start_point)
         delta = goal_point - start_point
-        # 분해능에 따라 이동 단계 계산goal_point
+        # 분해능에 따라 이동 단계 계산 goal_point
         steps = np.linspace(0, 1,self.resolution)
         # 경로 생성
         foot_trajectory = [start_point + step * delta for step in steps]
@@ -210,13 +205,12 @@ class TrajectoryGenerator:
         return fl_foot_coords,fr_foot_coords,rl_foot_coords,rr_foot_coords
 
 
-
 if __name__ == "__main__":
 
     tg=TrajectoryGenerator()
     ik=inverse.Kinematics()
     trajetory = tg.generate_move_trajectory(60,20,"forward")
-    print(trajetory[1])
+    print(trajetory[0])
     # target_pose = config.init_pose
     # pc = pose_cmd.PoseCommand()
     # current_pose =pc.get_pose()

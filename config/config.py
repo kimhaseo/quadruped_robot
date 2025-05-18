@@ -32,10 +32,10 @@ init_pose = {
 }
 
 start_pose = {
-    "fl_foot": [hip_pose["fl_hip"][0], -leg_length["L1"] + hip_pose["fl_hip"][1], -270],
-    "fr_foot": [hip_pose["fr_hip"][0], leg_length["L1"] + hip_pose["fr_hip"][1], -270],
-    "rl_foot": [hip_pose["rl_hip"][0], -leg_length["L1"] + hip_pose["rl_hip"][1], -270],
-    "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -270],
+    "fl_foot": [hip_pose["fl_hip"][0], -leg_length["L1"] + hip_pose["fl_hip"][1], -50],
+    "fr_foot": [hip_pose["fr_hip"][0], leg_length["L1"] + hip_pose["fr_hip"][1], -50],
+    "rl_foot": [hip_pose["rl_hip"][0], -leg_length["L1"] + hip_pose["rl_hip"][1], -50],
+    "rr_foot": [hip_pose["rr_hip"][0], leg_length["L1"] + hip_pose["rr_hip"][1], -50],
 }
 
 down_pose = {
