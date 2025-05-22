@@ -32,7 +32,7 @@ class AngleCommand(MotorCommand):
     angle: int
     speed: int
 
-    def __init__(self, motor_name: str, angle: int, speed: int = 4000):
+    def __init__(self, motor_name: str, angle: int, speed: int = 400):
         # MotorCommand는 motor_name과 value를 받으므로 angle을 value로 사용
         super().__init__(motor_name, angle)
         self.angle = angle  # angle 속성 설정

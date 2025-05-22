@@ -167,7 +167,7 @@ class MotorController:
 if __name__ == "__main__":
     mc = MotorController()
     time.sleep(2)
-    test1 = AngleCommand("fl_joint2", -0, 100)
+    test1 = AngleCommand("fl_joint3", 0, 1000)
     # test2 = AngleCommand("fl_joint3", -40, 100)
     mc.move_motor_to_angle(test1)
     # mc.move_motor_to_angle(test2)
