@@ -5,16 +5,12 @@ from os import close
 
 import numpy as np
 import threading
-import time
-
-from numpy.f2py.crackfortran import kindselector
-
 from manager.pose_manager import pose_cmd
 from sensor.ahrs import MW_AHRS
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from solver.inverse import Kinematics
 
-target_orientation = [0,10,0]
+target_orientation = [0,0,0]
 
 class StabilizerSolver:
     def __init__(self):

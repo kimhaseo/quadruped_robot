@@ -27,8 +27,6 @@ class MotorController:
             angle_control_mid2 = (angle_control >> 16) & 0xFF
             angle_control_high = (angle_control >> 24) & 0xFF
 
-
-
             data = [
                 command_byte,
                 null_byte,

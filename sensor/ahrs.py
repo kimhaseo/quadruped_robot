@@ -1,6 +1,5 @@
 import serial
 import time
-import re
 from manager.pose_manager import pose_cmd
 
 class MW_AHRS:
