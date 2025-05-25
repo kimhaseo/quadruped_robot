@@ -29,6 +29,7 @@ class TrajectoryGenerator:
         self.step_height = step_height
 
         if foot_direction == "forward":
+
             x = np.where(
                 (0 <= time) & (time < 0.5),
                 self.step_length * (time / 0.5) / 2,  # 0 → step_length/2
@@ -54,37 +55,34 @@ class TrajectoryGenerator:
                     0  # 나머지 시간: 접지 상태
                 )
             )
+
         if foot_direction == "backward":
-            # x 좌표 설정
+
             x = np.where(
                 (0 <= time) & (time < 0.5),
-                -self.step_length * (time / 0.5),  # 0에서 -step_length까지 감소
+                -self.step_length * (time / 0.5) / 2,  # 0 → step_length/2
                 np.where(
                     (0.5 <= time) & (time < 1.0),
-                    -self.step_length * (1 - (time - 0.5) / 0.5),  # -step_length에서 0으로 증가
+                    -self.step_length * (0.5 + (time - 0.5) / 2),  # step_length/2 → step_length
                     np.where(
-                        (1.0 <= time) & (time < 1.5),
-                        self.step_length * ((time - 1.0) / 0.5),  # 0에서 step_length까지 증가
-                        self.step_length * (1 - (time - 1.5) / 0.5)  # step_length에서 0으로 감소
-                    )
-                )
-            )
-            x= -x
-            y = np.zeros_like(time)
-            z = np.where(
-                (0 <= time) & (time < 0.5),
-                0,  # z는 0으로 유지
-                np.where(
-                    (0.5 <= time) & (time < 1.0),
-                    self.step_height * ((time - 0.5) / 0.5),  # 0에서 step_height까지 증가
-                    np.where(
-                        (1.0 <= time) & (time < 1.5),
-                        self.step_height * (1 - (time - 1.0) / 0.5),  # step_height에서 0까지 감소
-                        0  # z는 0으로 유지
+                        (1.0 <= time) & (time <= 2.0),
+                        -self.step_length * (1 - (time - 1.0) / 1.0),  # step_length → 0
+                        0
                     )
                 )
             )
 
+            y = np.zeros_like(time)
+
+            z = np.where(
+                (0 <= time) & (time < 0.5),
+                self.step_height * (time / 0.5),  # 0 → step_height
+                np.where(
+                    (0.5 <= time) & (time < 1.0),
+                    self.step_height * (1 - (time - 0.5) / 0.5),  # step_height → 0
+                    0  # 나머지 시간: 접지 상태
+                )
+            )
 
         return np.stack((x, y, z), axis=1)
 
@@ -106,12 +104,6 @@ class TrajectoryGenerator:
 
         elif robot_motion == "right":
             foot_direction = ["right","right","right","right"]
-
-        elif robot_motion == "left_turn":
-            foot_direction = ["backward","forward","backward","forward"]
-
-        elif robot_motion == "right_turn":
-            foot_direction = ["forward","backward","forward","backward"]
 
         fl_coords  = self.move_foot_trajectory(time,0,foot_direction[0], self.speed , self.step_hight)
         fr_coords  = self.move_foot_trajectory(time,0,foot_direction[1], self.speed , self.step_hight)
@@ -145,7 +137,7 @@ if __name__ == "__main__":
 
     tg=TrajectoryGenerator()
     ik=inverse.Kinematics()
-    trajetory = tg.generate_move_trajectory(60,20,"forward")
+    trajetory = tg.generate_move_trajectory(60,20,"backward")
     print(trajetory[0])
     # target_pose = config.init_pose
     # pc = pose_cmd.PoseCommand()

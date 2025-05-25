@@ -49,7 +49,7 @@ class MotionController:
         foot_coords[2] = (np.array(current_pose['rl_foot']) + zero_coord)
         foot_coords[3] = (np.array(current_pose['rr_foot']) + first_coords)
 
-        self.joint_control(foot_coords, leg_resolution/2,0.25,target_orientation,4000)
+        self.joint_control(foot_coords, leg_resolution/2,0.125,target_orientation,4000)
 
         for i in range(step_count):
 
@@ -59,14 +59,14 @@ class MotionController:
             foot_coords[1] = (np.array(current_pose['fr_foot']) + first_coords)
             foot_coords[2] = (np.array(current_pose['rl_foot']) + first_coords)
             foot_coords[3] = (np.array(current_pose['rr_foot']) + second_coords)
-            self.joint_control(foot_coords, leg_resolution/2,0.25,target_orientation,4000)
+            self.joint_control(foot_coords, leg_resolution/2,0.125,target_orientation,4000)
 
             if step_count == 0:
                 foot_coords[0] = (np.array(current_pose['fl_foot']) + zero_coord)
                 foot_coords[1] = (np.array(current_pose['fr_foot']) + second_coords)
                 foot_coords[2] = (np.array(current_pose['rl_foot']) + second_coords)
                 foot_coords[3] = (np.array(current_pose['rr_foot']) + zero_coord)
-                self.joint_control(foot_coords, leg_resolution / 2, 0.25, target_orientation, 4000)
+                self.joint_control(foot_coords, leg_resolution / 2, 0.125, target_orientation, 4000)
                 break
 
             else:
@@ -74,7 +74,7 @@ class MotionController:
                 foot_coords[1] = (np.array(current_pose['fr_foot']) + second_coords)
                 foot_coords[2] = (np.array(current_pose['rl_foot']) + second_coords)
                 foot_coords[3] = (np.array(current_pose['rr_foot']) + first_coords)
-                self.joint_control(foot_coords, leg_resolution/2,0.25,target_orientation,4000)
+                self.joint_control(foot_coords, leg_resolution/2,0.125,target_orientation,4000)
 
     def joint_control(self, coords, resolution, speed, target_orientation, motor_speed):
         diff_orientation = -(self.stabilizer.stabilize(target_orientation))
@@ -145,19 +145,13 @@ class MotionController:
 if __name__ == "__main__":
     controller = MotionController()
 
-    target_pose = config.config.start_pose
-    controller.pose_control(target_pose, [0, 0, 0], 20)
-    time.sleep(1)
-    target_pose = config.config.init_pose
-    controller.pose_control(target_pose, [0, 0, 0],100)
-    time.sleep(1)
-
+    controller.pose_control(config.config.start_pose, [0, 0, 0], 20)
+    controller.pose_control(config.config.init_pose, [0, 0, 0],100)
 
     controller.move_control(40,40,400,"forward", [0,0,0])
     time.sleep(2)
     # print("보행 완료")
 
-    target_pose = config.config.start_pose
-    controller.pose_control(target_pose, [0, 0, 0], 100)
+    controller.pose_control(config.config.start_pose, [0, 0, 0], 100)
 
 
