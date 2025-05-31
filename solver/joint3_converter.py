@@ -6,7 +6,7 @@ class CosineLawCalculator:
     def __init__(self):
 
         self.a = 170.245
-        self.b = 17         #link3 뒤쪽 길이
+        self.b = 17       #link3 뒤쪽 길이
         self.c = 173      #푸쉬 로드
         self.d = 22.847
 

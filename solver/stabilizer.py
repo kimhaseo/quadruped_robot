@@ -10,7 +10,7 @@ from sensor.ahrs import MW_AHRS
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from solver.inverse import Kinematics
 
-target_orientation = [0,0,0]
+target_orientation = [0,10,0]
 
 class StabilizerSolver:
     def __init__(self):

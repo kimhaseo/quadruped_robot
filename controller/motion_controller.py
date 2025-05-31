@@ -31,9 +31,11 @@ class MotionController:
         motor_speed  = speed * 40
         self.joint_control(coords,leg_resolution, 0.5, target_orientation, motor_speed)
 
-    def move_control(self, speed, step_hight, distance, robot_motion,target_orientation):
+    def move_control(self, speed, step_height, distance, robot_motion,target_orientation):
+
+        self.pose_control(config.config.init_pose, [0, 0, 0], 100)
         current_pose = self.pose_cmd.get_pose()
-        coords = self.trajectory_generator.generate_move_trajectory(speed, step_hight, robot_motion)
+        coords = self.trajectory_generator.generate_move_trajectory(speed, step_height, robot_motion)
         coords = list(coords)
 
         first_coords = coords[0][:int(leg_resolution/2)]
@@ -101,6 +103,7 @@ class MotionController:
             calibrated_coords_list[3].append(calibrated_coords["rr_foot"])
 
         delay = speed/resolution
+
         for i in range(int(resolution)):
 
             foot_coords = [calibrated_coords_list[0][i],calibrated_coords_list[1][i],calibrated_coords_list[2][i],calibrated_coords_list[3][i]]
@@ -146,7 +149,6 @@ if __name__ == "__main__":
     controller = MotionController()
 
     controller.pose_control(config.config.start_pose, [0, 0, 0], 20)
-    controller.pose_control(config.config.init_pose, [0, 0, 0],100)
 
     controller.move_control(40,40,400,"forward", [0,0,0])
     time.sleep(2)

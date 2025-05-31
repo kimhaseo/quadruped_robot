@@ -145,17 +145,17 @@ class Kinematics:
 if __name__ == "__main__":
     # 테스트 입력 (roll, pitch, yaw 값은 도 단위)
     roll = 0  # x축 회전 (degrees)
-    pitch = 0  # y축 회전 (degrees)
+    pitch = 10  # y축 회전 (degrees)
     yaw = 0  # z축 회전 (degrees)
     #
     kinematics = Kinematics()
-    test = kinematics.calculate_joint_angle(False,0,-89,-200)
+    # test = kinematics.calculate_joint_angle(False,0,-89,-200)
     # print(test)
     coords = config.init_pose
     coords_list = [coords["fl_foot"],coords["fr_foot"],coords["rl_foot"],coords["rr_foot"]]
-    print(type(coords_list))
-    # new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw, coords_list))
-    # print(new_foot_positions)
+    # print(type(coords_list))
+    new_foot_positions = (kinematics.calculate_foot_position_with_orientation(roll, pitch, yaw, coords_list))
+    print(new_foot_positions)
     # angle = kinematics.calculate_joint_angle(False,*new_foot_positions[0])
     #
     # test =  kinematics.calculate_joint_angle(False , 0, -89, -60)
