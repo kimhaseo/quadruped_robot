@@ -1,15 +1,12 @@
 import sys
 import os
-
-from keyboard.mouse import click
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import config.config
 from solver.trajectory import TrajectoryGenerator
 from solver.inverse import Kinematics
 from config.config import leg_resolution,hip_pose
 from config.motor_cmd import AngleCommand
-from controller.motor_controller import MotorController
+# from controller.motor_controller import MotorController
 from manager.pose_manager import pose_cmd
 from solver.stabilizer import StabilizerSolver
 import time
@@ -29,7 +26,15 @@ class MotionController:
         current_pose = self.pose_cmd.get_pose()
         coords = self.trajectory_generator.generate_pose_trajectory(target_pose,current_pose)
         motor_speed  = speed * 40
-        self.joint_control(coords,leg_resolution, 0.5, target_orientation, motor_speed)
+        self.joint_control(coords,leg_resolution, 0.2, target_orientation, motor_speed)
+    def balancing_control(self,target_orientation,base_pose):
+
+        while True:
+            diff_orientation = self.stabilizer.stabilize(target_orientation)
+            target_foot_pose = self.inverse_kinematics.calculate_foot_position_with_orientation(*diff_orientation,[base_pose["fl_foot"],base_pose["fr_foot"],base_pose["rl_foot"],base_pose["rr_foot"]])
+            print(target_foot_pose)
+            self.pose_control(target_foot_pose,target_orientation,100)
+
 
     def move_control(self, speed, step_height, distance, robot_motion,target_orientation):
 
@@ -147,13 +152,16 @@ class MotionController:
 
 if __name__ == "__main__":
     controller = MotionController()
-
+    #
     controller.pose_control(config.config.start_pose, [0, 0, 0], 20)
+    controller.pose_control(config.config.init_pose, [0, 0, 0], 20)
 
-    controller.move_control(40,40,400,"forward", [0,0,0])
-    time.sleep(2)
-    # print("보행 완료")
+    #
+    # controller.move_control(40,40,400,"forward", [0,0,0])
+    # time.sleep(2)
+    # # print("보행 완료")
+    #
+    # controller.pose_control(config.config.start_pose, [0, 0, 0], 100)
+    #
 
-    controller.pose_control(config.config.start_pose, [0, 0, 0], 100)
-
-
+    controller.balancing_control([0,0,0],config.config.init_pose)
